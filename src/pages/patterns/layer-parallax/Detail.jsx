@@ -26,7 +26,7 @@ export function LayerParallaxDetail() {
         lab="004"
         eyebrow="DEPTH FROM SPEED"
         title={<>스크롤로<br /><em>깊이를</em> 만드는 법</>}
-        description={<>같은 스크롤,<br />다른 속도.</>}
+        description="깊이가 다른 레이어가 같은 스크롤 구간을 서로 다른 거리만큼 이동하며 공간감을 만듭니다. JS API 하나로 제공하며, 지원 브라우저에서는 브라우저가 합성 스레드에서 직접 움직입니다."
       />
       <CodeSection id="layer-parallax-code" heading={<>API는 하나,<br />엔진은 둘.</>} label="레이어 패럴랙스 구현 방식 선택" snippets={layerParallaxSnippets} />
       <LayerParallaxDemo />
