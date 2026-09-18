@@ -132,7 +132,6 @@ function ScrollLinkedAd() {
       <div className="demo-heading">
         <p className="eyebrow">ONE LIVE DEMO, THREE ADAPTERS</p>
         <h2>움직임은 하나,<br />연결 방식은 셋.</h2>
-        <p>광고는 React 기준 구현으로 한 번만 실행합니다. 아래 탭에서 같은 scroll-driven 계약을 각 환경에 연결하는 코드만 비교하세요.</p>
       </div>
       <div className="implementation-tabs" role="tablist" aria-label="구현 방식 선택">
         {['react', 'plain', 'vue'].map(name => (
@@ -285,7 +284,7 @@ function FixedSceneCode() {
   const [implementation, setImplementation] = useState('react')
 
   return <section className="fixed-code-section" aria-label="고정 장면 전환 구현 방식">
-    <div className="demo-heading"><p className="eyebrow">IMPLEMENTATION ADAPTERS</p><h2>고정은 하나,<br />연결은 셋.</h2><p>실제 데모는 React 기준 구현으로 한 번만 실행합니다. 탭에서는 같은 고정 장면 계약을 각 환경에 연결하는 코드만 비교합니다.</p></div>
+    <div className="demo-heading"><p className="eyebrow">IMPLEMENTATION ADAPTERS</p><h2>고정은 하나,<br />연결은 셋.</h2></div>
     <div className="implementation-tabs" role="tablist" aria-label="고정 장면 전환 구현 방식 선택">
       {['react', 'plain', 'vue'].map(name => <button aria-controls="fixed-implementation-stage" aria-selected={implementation === name} className={implementation === name ? 'is-selected' : ''} key={name} onClick={() => setImplementation(name)} role="tab" type="button">{name === 'plain' ? 'Plain JS' : name[0].toUpperCase() + name.slice(1)}</button>)}
     </div>
