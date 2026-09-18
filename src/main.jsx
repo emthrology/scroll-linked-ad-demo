@@ -93,6 +93,10 @@ function useRoute() {
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
 
+  useEffect(() => {
+    if (route !== 'index') window.scrollTo({ top: 0, left: 0, behavior: 'auto' })
+  }, [route])
+
   return route
 }
 
