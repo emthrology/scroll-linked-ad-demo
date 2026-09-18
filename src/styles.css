@@ -88,7 +88,7 @@ h1 em { color: #b9d95e; font-style: normal; }
 .fixed-code-section .demo-heading { padding-top: 4vh; }
 .fixed-code-section .demo-heading .eyebrow { color: #c5dc77; }
 .fixed-code-section .demo-heading > p:last-child { color: #b6c6b8; }
-.fixed-scene-demo { position: relative; height: 300vh; background: #070b0b; }
+.fixed-scene-demo { position: relative; height: 400vh; background: #070b0b; }
 .fixed-scene-sticky { position: sticky; top: 0; display: grid; min-height: 100vh; overflow: hidden; place-items: center; color: #ecf2e8; background: radial-gradient(circle at 50% 52%, #23413a 0, #10221f 27%, #070b0b 67%); }
 .fixed-stage { position: absolute; z-index: 1; width: min(1320px, 92vw); text-align: center; will-change: opacity, transform; }
 .fixed-stage > span, .fixed-scene-meter { color: #c5dc77; font: 11px 'DM Mono', monospace; letter-spacing: .14em; }

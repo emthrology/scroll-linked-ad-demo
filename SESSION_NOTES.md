@@ -17,3 +17,4 @@
 - 2026-09-18: Apple iPhone 카메라 섹션 분석을 바탕으로 고정 장면 전환을 두 번째 기준 구현으로 추가했다. `src/fixed-scene-transition.js`는 300vh container의 sticky travel을 0~1 progress로 계산하고 rAF scroll/resize listener를 destroy에서 정리한다. 처음에는 전역 `main { overflow: hidden }` 때문에 sticky가 문서와 함께 밀려나는 문제가 있었고, 전역 clip을 제거해 요소별 overflow만 유지했다. 좁은 화면과 reduced motion은 sticky/전환 없이 정적 세로 흐름으로 폴백한다.
 - 2026-09-18: 고정 장면 전환 상세에 구현 코드부가 빠졌다는 사용자 피드백에 따라 React / Plain JS / Vue 어댑터 예시 탭을 추가했다. 실제 데모는 React 구현 하나만 실행하고, 탭은 코드만 바꿔 보여준다.
 - 2026-09-18: 큰 화면에서 고정 장면 제목이 880px 폭과 8vw 글자 크기 때문에 줄바꿈되는 문제를 수정했다. stage 폭을 최대 1320px로 넓히고 데스크톱 글자 크기를 최대 6rem으로 제한하며 한 줄을 강제했다. 모바일에서는 줄바꿈을 다시 허용한다.
+- 2026-09-18: 고정 장면 전환의 제목 crossfade는 글자가 겹쳐 읽기 어렵다는 사용자 피드백으로 제거했다. 이전 장면이 완전히 사라진 뒤 다음 장면을 진입시키며, 섹션을 400vh로 늘려 마지막 장면을 progress 73~100% 동안 단독 고정한다.

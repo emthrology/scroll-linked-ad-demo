@@ -263,11 +263,11 @@ function FixedSceneDemo() {
     return controller.destroy
   }, [reducedMotion])
 
-  const transition = motion.progress * (stages.length - 1)
+  const fade = (start, end) => Math.min(1, Math.max(0, (motion.progress - start) / (end - start)))
   const opacityFor = index => {
-    if (index === 0) return Math.max(0, 1 - transition)
-    if (index === stages.length - 1) return Math.min(1, Math.max(0, transition - (index - 1)))
-    return Math.min(1, Math.max(0, Math.min(transition - (index - 1), index + 1 - transition)))
+    if (index === 0) return 1 - fade(.27, .34)
+    if (index === 1) return fade(.34, .41) * (1 - fade(.59, .66))
+    return fade(.66, .73)
   }
 
   return <section className={`fixed-scene-demo${reducedMotion ? ' is-reduced' : ''}`} ref={sectionRef} aria-label="고정 장면 전환 데모">
@@ -343,7 +343,7 @@ function FixedSceneDetail() {
       <div className="bottom-heading"><span>HOW IT WORKS</span><h2>고정하고,<br />전환한다.</h2></div>
       <div className="feature-list">
         <div className="feature-row"><span>01</span><strong>시작 경계</strong><p>섹션 상단이 viewport 상단에 닿으면 고정 장면을 시작합니다.</p></div>
-        <div className="feature-row"><span>02</span><strong>세 구간 진행률</strong><p>섹션의 300vh 높이에서 남는 200vh를 0~1 progress로 변환하고, 이를 세 장면의 교차 전환에 사용합니다.</p></div>
+        <div className="feature-row"><span>02</span><strong>세 구간 진행률</strong><p>섹션의 400vh 높이에서 남는 300vh를 0~1 progress로 변환합니다. 이전 장면이 완전히 사라진 뒤 다음 장면을 보여주고, 마지막 장면은 단독으로 유지합니다.</p></div>
         <div className="feature-row"><span>03</span><strong>역스크롤</strong><p>진행률을 다시 계산하므로 위로 스크롤하면 앞 장면으로 같은 위치만큼 되감깁니다.</p></div>
         <div className="feature-row"><span>04</span><strong>reduced motion</strong><p>동작 감소 환경에서는 sticky와 장면 전환을 해제하고 세 메시지를 정적 세로 흐름으로 노출합니다.</p></div>
         <div className="principle-formula"><p>H = 화면 높이 · top = 고정 섹션의 화면 내 상단 위치 · h = 고정 섹션 높이</p><pre><code>{['progress = clamp(-top / (h - H), 0, 1)', 'stage = floor(progress * sceneCount)', 'scene opacity = progress 구간별 교차 전환'].join('\n')}</code></pre></div>
