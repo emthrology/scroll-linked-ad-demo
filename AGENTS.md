@@ -31,6 +31,7 @@ docs/                              제품 방향·목표 구조·패턴 카탈�
 - 레이어 패럴랙스의 timeline·rAF 엔진은 같은 keyframe을 공유한다. 엔진별로 이동량을 따로 계산하지 않는다. `src/patterns/layer-parallax.js`
 - 진행률 경계 계산은 `src/patterns/core.js`의 `progressBetween(top, startTop, endTop)`을 쓴다. 패턴 파일에서 공식을 다시 쓰지 않는다.
 - 새 패턴 상세는 `src/pages/patterns/<slug>/`에 Detail·Demo·snippets·styles를 두고, `src/App.jsx`의 `details`와 `src/content/patterns.js`에 등록한다.
+- 클래스·id에 `ad-`, `ad_`, `advert`, `sponsor` 같은 광고성 이름을 쓰지 않는다. 광고 차단기(EasyList 등)가 요소를 통째로 숨긴다.
 - 데모와 프레임워크 구현은 분리되지 않는다. 체험 사이트는 실제 구현체를 사용한다.
 - 새 패턴은 카탈로그의 추가 기준을 충족하기 전에는 구현을 시작하지 않는다.
 

@@ -3,13 +3,13 @@ import { createInnerSceneScroll } from '../../../patterns/inner-scene-scroll.js'
 
 function SceneCard({ metrics, isActive, adRef, innerRef }) {
   return (
-    <div className="ad-card">
-      <div className="ad-window" ref={adRef}>
-        <div className="ad-inner" ref={innerRef}>
+    <div className="scene-card">
+      <div className="scene-window" ref={adRef}>
+        <div className="scene-inner" ref={innerRef}>
           <AdContents />
         </div>
       </div>
-      <div className="ad-status" aria-live="polite">
+      <div className="scene-status" aria-live="polite">
         <span>{isActive ? 'SCROLL LINKED' : 'OUTSIDE RANGE'}</span>
         <span>{Math.round(metrics.progress * 100)}%</span>
       </div>
@@ -19,20 +19,20 @@ function SceneCard({ metrics, isActive, adRef, innerRef }) {
 
 function AdContents() {
   return <>
-    <div className="ad-hero">
+    <div className="scene-hero">
       <div className="hero-orb hero-orb-one" />
       <div className="hero-orb hero-orb-two" />
-      <div className="ad-kicker">A NEW PERSPECTIVE</div>
-      <p className="ad-brand">AD<br />PREVIEW</p>
+      <div className="scene-kicker">A NEW PERSPECTIVE</div>
+      <p className="scene-brand">AD<br />PREVIEW</p>
       <div className="hero-copy"><span>DISCOVER SOMETHING NEW</span><h2>당신의 일상에<br />새로운 장면을</h2></div>
     </div>
-    <div className="ad-detail">
+    <div className="scene-detail">
       <span className="detail-label">MORE TO DISCOVER</span>
       <h3>익숙한 일상에<br />새로운 발견</h3><div className="detail-line" />
       <p>작은 관심에서 시작되는 변화.<br />당신만의 다음 장면을 만나보세요.</p>
       <div className="detail-stats"><div><strong>NEW</strong><span>COLLECTION</span></div><div><strong>NOW</strong><span>EXPLORE MORE</span></div></div>
     </div>
-    <div className="ad-footer"><span>ADVERTISEMENT PREVIEW</span><span>SCROLL TO EXPLORE</span></div>
+    <div className="scene-footer"><span>ADVERTISEMENT PREVIEW</span><span>SCROLL TO EXPLORE</span></div>
   </>
 }
 
@@ -68,6 +68,6 @@ export function InnerSceneDemo() {
   }, [])
 
   return (
-    <div className="ad-section"><SceneCard adRef={adRef} innerRef={innerRef} isActive={isActive} metrics={metrics} /><MetricsPanel metrics={metrics} /></div>
+    <div className="scene-section"><SceneCard adRef={adRef} innerRef={innerRef} isActive={isActive} metrics={metrics} /><MetricsPanel metrics={metrics} /></div>
   )
 }

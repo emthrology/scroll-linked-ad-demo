@@ -9,8 +9,8 @@ export const innerSceneSnippets = {
   return controller.destroy
 }, [])`,
   plain: `const controller = createInnerSceneScroll({
-  ad: document.querySelector('.ad-window'),
-  inner: document.querySelector('.ad-inner'),
+  ad: document.querySelector('.scene-window'),
+  inner: document.querySelector('.scene-inner'),
   onUpdate: ({ progress, offset }) => {
     progressLabel.textContent = Math.round(progress * 100) + '%'
     inner.style.transform = \`translateY(-\${offset}px)\`
