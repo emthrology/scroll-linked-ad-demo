@@ -1,0 +1,27 @@
+.fixed-scene-demo { position: relative; height: 400vh; background: #070b0b; }
+.fixed-scene-sticky { position: sticky; top: 0; display: grid; min-height: 100vh; overflow: hidden; place-items: center; color: #ecf2e8; background: radial-gradient(circle at 50% 52%, #23413a 0, #10221f 27%, #070b0b 67%); }
+.fixed-stage { position: absolute; z-index: 1; width: min(1320px, 92vw); text-align: center; will-change: opacity, transform; }
+.fixed-stage > span, .fixed-scene-meter { color: #c5dc77; font: 11px 'DM Mono', monospace; letter-spacing: .14em; }
+.fixed-stage h2 { margin: 26px 0 22px; font-size: clamp(3.4rem, 5vw, 6rem); font-weight: 500; line-height: .88; letter-spacing: -.09em; white-space: nowrap; }
+.fixed-stage p { max-width: 380px; margin: 0 auto; color: #b6c6b8; font-size: 15px; line-height: 1.7; }
+.fixed-scene-meter { position: absolute; z-index: 2; right: 5vw; bottom: 32px; display: flex; gap: 18px; color: #b6c6b8; }
+.fixed-orb { position: absolute; border: 1px solid rgba(213, 236, 183, .19); border-radius: 50%; transition: transform .1s linear; }
+.fixed-orb-one { width: min(75vw, 900px); aspect-ratio: 1; transform: scale(calc(.72 + var(--fixed-progress) * .44)) rotate(calc(var(--fixed-progress) * 36deg)); }
+.fixed-orb-two { width: min(50vw, 620px); aspect-ratio: 1; transform: scale(calc(1.35 - var(--fixed-progress) * .42)) rotate(calc(var(--fixed-progress) * -54deg)); }
+@media (max-width: 760px) {
+  .fixed-scene-demo { height: auto; }
+  .fixed-scene-sticky { display: block; min-height: 0; padding: 80px 24px; }
+  .fixed-stage { position: relative; width: 100%; margin: 0 0 96px; text-align: left; opacity: 1 !important; transform: none !important; }
+  .fixed-stage:last-of-type { margin-bottom: 0; }
+  .fixed-stage h2 { font-size: clamp(3rem, 16vw, 5rem); white-space: normal; }
+  .fixed-stage p { margin-left: 0; }
+  .fixed-scene-meter, .fixed-orb { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .fixed-scene-demo { height: auto; }
+  .fixed-scene-sticky { display: block; min-height: 0; padding: 80px 5vw; }
+  .fixed-stage { position: relative; width: 100%; margin: 0 0 96px; text-align: left; opacity: 1 !important; transform: none !important; }
+  .fixed-stage:last-of-type { margin-bottom: 0; }
+  .fixed-stage p { margin-left: 0; }
+  .fixed-scene-meter, .fixed-orb { display: none; }
+}

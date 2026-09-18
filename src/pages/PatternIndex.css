@@ -1,0 +1,25 @@
+.index-page { min-height: 100vh; background: #10211d; }
+.index-hero { max-width: 960px; padding: 14vh 5vw 10vh; }
+.index-hero h1 { max-width: 900px; }
+.index-hero h1 em { color: #b9d95e; font-style: normal; }
+.index-hero > p:last-child { max-width: 520px; margin: 0; color: #b4c0b4; font-size: 16px; line-height: 1.7; }
+.pattern-index { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0 5vw; border-top: 1px solid rgba(233, 236, 223, .24); }
+.pattern-card { display: flex; min-height: 360px; flex-direction: column; padding: 26px; border-right: 1px solid rgba(233, 236, 223, .24); border-bottom: 1px solid rgba(233, 236, 223, .24); color: #a7b2a6; text-decoration: none; }
+.pattern-card:nth-child(even) { border-right: 0; }
+.pattern-card.is-available { color: #e9ecdf; background: linear-gradient(135deg, rgba(84, 113, 102, .32), rgba(16, 33, 29, 0)); transition: background .2s ease, color .2s ease; }
+.pattern-card.is-available:hover { color: #fff; background: #24443d; }
+.pattern-card-top { display: flex; justify-content: space-between; font: 10px 'DM Mono', monospace; letter-spacing: .1em; }
+.status { color: #839184; }
+.status-in-progress { color: #b9d95e; }
+.status-next { color: #b9d95e; }
+.pattern-card h2 { margin: auto 0 14px; color: inherit; font-size: clamp(2rem, 4vw, 4rem); font-weight: 500; line-height: .92; letter-spacing: -.07em; }
+.pattern-card p { max-width: 380px; margin-bottom: 22px; font-size: 14px; line-height: 1.7; }
+.pattern-card small { font: 10px/1.5 'DM Mono', monospace; letter-spacing: .06em; }
+.pattern-link { margin-top: 26px; color: #b9d95e; font: 11px 'DM Mono', monospace; letter-spacing: .1em; }
+.index-footer { display: flex; justify-content: space-between; gap: 16px; padding: 32px 5vw; color: #a7b2a6; font: 10px 'DM Mono', monospace; letter-spacing: .12em; }
+@media (max-width: 760px) {
+  .index-hero { padding: 16vh 24px 9vh; }
+  .pattern-index { grid-template-columns: 1fr; margin: 0 24px; }
+  .pattern-card, .pattern-card:nth-child(even) { min-height: 290px; border-right: 0; }
+  .index-footer { padding: 24px; font-size: 9px; }
+}
