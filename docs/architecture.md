@@ -7,7 +7,9 @@
 현재는 React/Vite 체험 사이트이며, 패턴 인덱스와 내부 장면 이동 상세 화면을 hash 경로로 제공한다.
 
 ```text
-src/main.jsx     패턴 인덱스·상세 라우팅, 데모 UI와 scroll-driven 구현
+src/main.jsx     패턴 인덱스·상세 라우팅과 React 데모 UI
+src/inner-scene-scroll.js     내부 장면 이동 기준 구현
+src/fixed-scene-transition.js 고정 장면 전환 기준 구현
 src/styles.css   데모 스타일
 ```
 

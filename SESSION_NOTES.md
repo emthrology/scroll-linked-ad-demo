@@ -13,4 +13,5 @@
 - Plain JS 기준 구현: `src/inner-scene-scroll.js`에 `createInnerSceneScroll()`을 추가했다. React 데모는 이 함수의 lifecycle wrapper이며, 시작·종료 경계, rAF, IntersectionObserver, destroy 정리를 공유한다.
 - 여백 변경: 두 번째 섹션의 160vh/150vh 최소 높이를 제거하고, 사용자 조정에 따라 상하 패딩을 데스크톱 32px/모바일 24px로 설정했다. 좌우 화면 간격과 카드·패널 간격은 유지한다.
 - 2026-09-18: React / Plain JS / Vue 실제 마운트 탭은 시연에서 차이를 전달하지 못해 제거했다. 사용자 판단: 동일한 움직임을 중복 실행하는 탭은 코드 낭비이며, 체험 사이트에는 React 기준 구현 하나를 유지하고 탭은 프레임워크별 연결 코드 예시를 전환해 보여준다. Vue runtime 의존성과 임시 마운트 파일도 제거했다. Vue 구현은 다시 로드맵과 카탈로그에서 예정 상태다.
-- 2026-09-18: 패턴 인덱스와 상세 체험을 `src/main.jsx`의 hash route로 분리했다. `#/`는 카탈로그의 4개 패턴을 보여주며 구현된 내부 장면 이동만 상세로 연결한다. `#/patterns/inner-scene-scroll`은 기존 소개 → 코드 예시/실제 데모 → How 구조를 유지한다. 새 라우팅 라이브러리는 패턴 수와 화면 수가 적어 추가하지 않았다.
+- 2026-09-18: 패턴 인덱스와 상세 체험을 `src/main.jsx`의 hash route로 분리했다. `#/`는 카탈로그의 4개 패턴을 보여주며 구현된 내부 장면 이동과 고정 장면 전환을 상세로 연결한다. 각 상세는 소개 → 실제 데모 → How 구조를 유지한다. 새 라우팅 라이브러리는 패턴 수와 화면 수가 적어 추가하지 않았다.
+- 2026-09-18: Apple iPhone 카메라 섹션 분석을 바탕으로 고정 장면 전환을 두 번째 기준 구현으로 추가했다. `src/fixed-scene-transition.js`는 300vh container의 sticky travel을 0~1 progress로 계산하고 rAF scroll/resize listener를 destroy에서 정리한다. 처음에는 전역 `main { overflow: hidden }` 때문에 sticky가 문서와 함께 밀려나는 문제가 있었고, 전역 clip을 제거해 요소별 overflow만 유지했다. 좁은 화면과 reduced motion은 sticky/전환 없이 정적 세로 흐름으로 폴백한다.

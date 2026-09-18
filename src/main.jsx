@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createInnerSceneScroll } from './inner-scene-scroll.js'
+import { createFixedSceneTransition } from './fixed-scene-transition.js'
 import './styles.css'
 
 const principleSteps = [
@@ -44,13 +45,16 @@ onBeforeUnmount(() => controller?.destroy())`,
 
 const patterns = [
   { slug: 'inner-scene-scroll', name: '내부 장면 이동', status: 'In progress', summary: '카드 안쪽 장면을 document scroll 위치에 맞춰 이동합니다.', constraint: '내부 스크롤 없이 clip 필요', available: true },
-  { name: '고정 장면 전환', status: 'Next', summary: '고정된 장면에서 스크롤 구간마다 콘텐츠의 초점을 바꿉니다.', constraint: 'sticky 높이와 모바일 재배치', available: false },
+  { slug: 'fixed-scene-transition', name: '고정 장면 전환', status: 'In progress', summary: '고정된 장면에서 스크롤 구간마다 콘텐츠의 초점을 바꿉니다.', constraint: 'sticky 높이와 모바일 재배치', available: true },
   { name: '이미지 리빌', status: 'Research', summary: '스크롤 진행률로 이미지의 노출 영역을 점진적으로 엽니다.', constraint: '이미지 비율과 reduced motion', available: false },
   { name: '레이어 패럴랙스', status: 'Research', summary: '깊이가 다른 레이어를 서로 다른 속도로 이동합니다.', constraint: '저사양 기기 GPU 비용', available: false },
 ]
 
 function useRoute() {
-  const getRoute = () => window.location.hash === '#/patterns/inner-scene-scroll' ? 'detail' : 'index'
+  const getRoute = () => ({
+    '#/patterns/inner-scene-scroll': 'inner-scene-scroll',
+    '#/patterns/fixed-scene-transition': 'fixed-scene-transition',
+  }[window.location.hash] || 'index')
   const [route, setRoute] = useState(getRoute)
 
   useEffect(() => {
@@ -195,7 +199,59 @@ function ReactScene() {
   )
 }
 
-function PatternDetail() {
+function useReducedMotion() {
+  const query = '(prefers-reduced-motion: reduce)'
+  const [reduced, setReduced] = useState(() => window.matchMedia(query).matches)
+
+  useEffect(() => {
+    const media = window.matchMedia(query)
+    const update = () => setReduced(media.matches)
+    media.addEventListener('change', update)
+    return () => media.removeEventListener('change', update)
+  }, [])
+
+  return reduced
+}
+
+function FixedSceneDemo() {
+  const sectionRef = useRef(null)
+  const reducedMotion = useReducedMotion()
+  const [motion, setMotion] = useState({ progress: 0, stage: 0 })
+  const stages = [
+    ['01', 'SIGNAL', '관점을 먼저 고정한다.', '한 문장과 한 방향으로 시선을 모읍니다.'],
+    ['02', 'FOCUS', '장면의 중심을 좁힌다.', '한 가지 물성과 핵심 기능을 크게 드러냅니다.'],
+    ['03', 'CONTROL', '제어의 폭을 펼친다.', '수치와 도구를 순서대로 연결해 이해를 완성합니다.'],
+  ]
+
+  useEffect(() => {
+    if (reducedMotion) return undefined
+    const controller = createFixedSceneTransition({
+      container: sectionRef.current,
+      sceneCount: stages.length,
+      onUpdate: setMotion,
+    })
+    return controller.destroy
+  }, [reducedMotion])
+
+  const transition = motion.progress * (stages.length - 1)
+  const opacityFor = index => {
+    if (index === 0) return Math.max(0, 1 - transition)
+    if (index === stages.length - 1) return Math.min(1, Math.max(0, transition - (index - 1)))
+    return Math.min(1, Math.max(0, Math.min(transition - (index - 1), index + 1 - transition)))
+  }
+
+  return <section className={`fixed-scene-demo${reducedMotion ? ' is-reduced' : ''}`} ref={sectionRef} aria-label="고정 장면 전환 데모">
+    <div className="fixed-scene-sticky">
+      <div className="fixed-orb fixed-orb-one" /><div className="fixed-orb fixed-orb-two" />
+      {stages.map(([number, label, title, description], index) => <article className="fixed-stage" key={label} style={{ opacity: reducedMotion ? 1 : opacityFor(index), transform: reducedMotion ? 'none' : `translateY(${(1 - opacityFor(index)) * 24}px)` }}>
+        <span>{number} / {label}</span><h2>{title}</h2><p>{description}</p>
+      </article>)}
+      <div className="fixed-scene-meter" aria-live="polite"><span>{reducedMotion ? 'STATIC FLOW' : `SCENE ${String(motion.stage + 1).padStart(2, '0')}`}</span><span>{Math.round(motion.progress * 100)}%</span></div>
+    </div>
+  </section>
+}
+
+function InnerSceneDetail() {
   return (
     <main>
       <SiteHeader />
@@ -231,8 +287,34 @@ translateY = -progress * maxMove`}</code></pre>
   )
 }
 
+function FixedSceneDetail() {
+  return <main>
+    <SiteHeader />
+    <section className="intro-spacer fixed-intro">
+      <a className="back-link" href="#/">← 모든 패턴</a>
+      <div className="topbar"><span>SCROLL LAB / 002</span><span>INTERACTION STUDY</span></div>
+      <div className="intro-content"><p className="eyebrow">A PRODUCT STORY IN THREE SCENES</p><h1>스크롤로<br /><em>시선을</em> 고정하는 법</h1><p className="intro-description">긴 document scroll 구간 안에서 장면은 화면에 머물고, 메시지의 중심만 단계별로 바뀝니다.</p><div className="scroll-cue"><span />아래로 스크롤해 보세요</div></div>
+    </section>
+    <FixedSceneDemo />
+    <section className="intro-spacer fixed-how">
+      <div className="bottom-heading"><span>HOW IT WORKS</span><h2>고정하고,<br />전환한다.</h2></div>
+      <div className="feature-list">
+        <div className="feature-row"><span>01</span><strong>시작 경계</strong><p>섹션 상단이 viewport 상단에 닿으면 고정 장면을 시작합니다.</p></div>
+        <div className="feature-row"><span>02</span><strong>세 구간 진행률</strong><p>섹션의 300vh 높이에서 남는 200vh를 0~1 progress로 변환하고, 이를 세 장면의 교차 전환에 사용합니다.</p></div>
+        <div className="feature-row"><span>03</span><strong>역스크롤</strong><p>진행률을 다시 계산하므로 위로 스크롤하면 앞 장면으로 같은 위치만큼 되감깁니다.</p></div>
+        <div className="feature-row"><span>04</span><strong>reduced motion</strong><p>동작 감소 환경에서는 sticky와 장면 전환을 해제하고 세 메시지를 정적 세로 흐름으로 노출합니다.</p></div>
+        <div className="principle-formula"><p>H = 화면 높이 · top = 고정 섹션의 화면 내 상단 위치 · h = 고정 섹션 높이</p><pre><code>{['progress = clamp(-top / (h - H), 0, 1)', 'stage = floor(progress * sceneCount)', 'scene opacity = progress 구간별 교차 전환'].join('\n')}</code></pre></div>
+      </div>
+      <div className="footer-note"><span>STICKY SCENE TRANSITION</span><span>REVERSE TO REWIND</span></div>
+    </section>
+  </main>
+}
+
 function App() {
-  return useRoute() === 'detail' ? <PatternDetail /> : <PatternIndex />
+  const route = useRoute()
+  if (route === 'inner-scene-scroll') return <InnerSceneDetail />
+  if (route === 'fixed-scene-transition') return <FixedSceneDetail />
+  return <PatternIndex />
 }
 
 createRoot(document.getElementById('root')).render(<App />)
