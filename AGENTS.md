@@ -26,7 +26,7 @@ docs/              제품 방향·목표 구조·패턴 카탈로그
 - [x] React 내부 장면 이동 데모 — `overflow: hidden`과 `translateY`로 중첩 스크롤 없이 구현
 - [x] Plain JS 내부 장면 이동 구현 — `src/inner-scene-scroll.js`가 React 연결에서도 직접 실행되는 기준 구현
 - [ ] Vue 내부 장면 이동 구현
-- [ ] 패턴 인덱스와 상세 페이지 분리
+- [x] 패턴 인덱스와 상세 페이지 분리 — `#/` 인덱스와 `#/patterns/inner-scene-scroll` 체험 상세
 - [ ] 고정 장면 전환 패턴
 - [ ] reduced motion 공통 정책
 - 보류: 모노레포·패키지 분리 — 패턴이 3개 이상일 때 재검토

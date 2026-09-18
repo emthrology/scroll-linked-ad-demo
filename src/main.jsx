@@ -42,6 +42,54 @@ controller.destroy()`,
 onBeforeUnmount(() => controller?.destroy())`,
 }
 
+const patterns = [
+  { slug: 'inner-scene-scroll', name: '내부 장면 이동', status: 'In progress', summary: '카드 안쪽 장면을 document scroll 위치에 맞춰 이동합니다.', constraint: '내부 스크롤 없이 clip 필요', available: true },
+  { name: '고정 장면 전환', status: 'Next', summary: '고정된 장면에서 스크롤 구간마다 콘텐츠의 초점을 바꿉니다.', constraint: 'sticky 높이와 모바일 재배치', available: false },
+  { name: '이미지 리빌', status: 'Research', summary: '스크롤 진행률로 이미지의 노출 영역을 점진적으로 엽니다.', constraint: '이미지 비율과 reduced motion', available: false },
+  { name: '레이어 패럴랙스', status: 'Research', summary: '깊이가 다른 레이어를 서로 다른 속도로 이동합니다.', constraint: '저사양 기기 GPU 비용', available: false },
+]
+
+function useRoute() {
+  const getRoute = () => window.location.hash === '#/patterns/inner-scene-scroll' ? 'detail' : 'index'
+  const [route, setRoute] = useState(getRoute)
+
+  useEffect(() => {
+    const onHashChange = () => setRoute(getRoute())
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
+  }, [])
+
+  return route
+}
+
+function SiteHeader() {
+  return <header className="site-header"><a href="#/">SCROLL MOTION ATLAS</a><span>INTERACTION PATTERN LIBRARY</span></header>
+}
+
+function PatternIndex() {
+  return <main className="index-page">
+    <SiteHeader />
+    <section className="index-hero">
+      <p className="eyebrow">SCROLL INTERACTION PATTERNS</p>
+      <h1>움직임을<br /><em>찾고,</em> 이해하고,<br />다시 쓴다.</h1>
+      <p>보이는 효과를 기준으로 패턴을 탐색합니다. 구현된 항목은 실제 체험과 연결 코드를 함께 확인할 수 있습니다.</p>
+    </section>
+    <section className="pattern-index" aria-label="스크롤 인터랙션 패턴 목록">
+      {patterns.map((pattern, index) => {
+        const content = <>
+          <div className="pattern-card-top"><span>0{index + 1}</span><span className={`status status-${pattern.status.toLowerCase().replace(' ', '-')}`}>{pattern.status}</span></div>
+          <h2>{pattern.name}</h2><p>{pattern.summary}</p><small>{pattern.constraint}</small>
+          <span className="pattern-link">{pattern.available ? '체험 페이지 열기 ↗' : '준비 중'}</span>
+        </>
+        return pattern.available
+          ? <a className="pattern-card is-available" href={`#/patterns/${pattern.slug}`} key={pattern.name}>{content}</a>
+          : <article className="pattern-card" key={pattern.name}>{content}</article>
+      })}
+    </section>
+    <footer className="index-footer"><span>01 / INTERNAL SCENE SCROLL</span><span>MORE PATTERNS IN PROGRESS</span></footer>
+  </main>
+}
+
 function ScrollLinkedAd() {
   const [implementation, setImplementation] = useState('react')
 
@@ -147,10 +195,12 @@ function ReactScene() {
   )
 }
 
-function App() {
+function PatternDetail() {
   return (
     <main>
+      <SiteHeader />
       <section className="intro-spacer intro-top">
+        <a className="back-link" href="#/">← 모든 패턴</a>
         <div className="topbar"><span>SCROLL LAB / 001</span><span>INTERACTION STUDY</span></div>
         <div className="intro-content">
           <p className="eyebrow">A SMALL STUDY IN MOTION</p>
@@ -179,6 +229,10 @@ translateY = -progress * maxMove`}</code></pre>
       </section>
     </main>
   )
+}
+
+function App() {
+  return useRoute() === 'detail' ? <PatternDetail /> : <PatternIndex />
 }
 
 createRoot(document.getElementById('root')).render(<App />)

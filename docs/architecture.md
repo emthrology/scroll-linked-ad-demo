@@ -4,10 +4,10 @@
 
 ## 현재 상태
 
-현재는 React/Vite 단일 데모이며 내부 장면 이동 패턴 하나를 포함한다.
+현재는 React/Vite 체험 사이트이며, 패턴 인덱스와 내부 장면 이동 상세 화면을 hash 경로로 제공한다.
 
 ```text
-src/main.jsx     데모 UI와 scroll-driven 구현
+src/main.jsx     패턴 인덱스·상세 라우팅, 데모 UI와 scroll-driven 구현
 src/styles.css   데모 스타일
 ```
 
