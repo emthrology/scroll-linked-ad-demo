@@ -8,7 +8,7 @@
 
 ```text
 src/main.jsx                       패턴 인덱스·상세 화면과 React 데모
-src/patterns/                      내부 장면 이동·고정 장면 전환·이미지 리빌 기준 구현
+src/patterns/                      내부 장면 이동·고정 장면 전환·이미지 리빌·레이어 패럴랙스 기준 구현
 src/styles.css                     페이지와 데모 스타일
 docs/              제품 방향·목표 구조·패턴 카탈로그
 .github/           이슈 작성 양식
@@ -21,6 +21,7 @@ docs/              제품 방향·목표 구조·패턴 카탈로그
 - 내부 장면 이동의 기준 경계는 광고 상단 80% 시작과 하단 20% 종료다. `src/patterns/inner-scene-scroll.js`
 - 고정 장면 전환은 400vh 섹션의 sticky travel을 0~1 progress로 계산한다. `src/patterns/fixed-scene-transition.js`
 - 이미지 리빌은 섹션 상단 80% 시작, sticky 고정이 풀리는 섹션 하단 100% 종료로 계산한다. `src/patterns/image-reveal.js`
+- 레이어 패럴랙스의 timeline·rAF 엔진은 같은 keyframe을 공유한다. 엔진별로 이동량을 따로 계산하지 않는다. `src/patterns/layer-parallax.js`
 - 데모와 프레임워크 구현은 분리되지 않는다. 체험 사이트는 실제 구현체를 사용한다.
 - 새 패턴은 카탈로그의 추가 기준을 충족하기 전에는 구현을 시작하지 않는다.
 
@@ -32,5 +33,6 @@ docs/              제품 방향·목표 구조·패턴 카탈로그
 - [x] 패턴 인덱스와 상세 페이지 분리 — `#/` 인덱스와 두 패턴의 hash 상세 체험
 - [x] 고정 장면 전환 패턴 — `src/patterns/fixed-scene-transition.js`와 `#/patterns/fixed-scene-transition`
 - [x] 이미지 리빌 패턴 — `src/patterns/image-reveal.js`와 `#/patterns/image-reveal`
+- [x] 레이어 패럴랙스 패턴 — `src/patterns/layer-parallax.js`(ViewTimeline 우선, rAF 대체)와 `#/patterns/layer-parallax`
 - [ ] reduced motion 공통 정책
 - 보류: 모노레포·패키지 분리 — 패턴이 3개 이상일 때 재검토

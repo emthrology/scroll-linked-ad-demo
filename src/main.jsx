@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client'
 import { createInnerSceneScroll } from './patterns/inner-scene-scroll.js'
 import { createFixedSceneTransition } from './patterns/fixed-scene-transition.js'
 import { createImageReveal } from './patterns/image-reveal.js'
+import { createLayerParallax } from './patterns/layer-parallax.js'
+import './patterns/layer-parallax.css'
 import './styles.css'
 
 const principleSteps = [
@@ -101,11 +103,45 @@ controller.destroy()`,
 onBeforeUnmount(() => controller?.destroy())`,
 }
 
+const layerParallaxSnippets = {
+  react: `useEffect(() => {
+  const controller = createLayerParallax({
+    container: sectionRef.current,
+    layers: sectionRef.current.querySelectorAll('.layer-parallax-layer'),
+    engine: 'auto', // ViewTimeline 지원 시 브라우저 엔진, 아니면 rAF
+    onUpdate: ({ progress }) => setProgress(progress),
+  })
+  controller.animate(skyRef.current, [{ opacity: 0 }, { opacity: 1 }])
+  return controller.destroy
+}, [])`,
+  plain: `const section = document.querySelector('.layer-parallax')
+const controller = createLayerParallax({
+  container: section,
+  layers: section.querySelectorAll('.layer-parallax-layer'),
+})
+
+// 같은 progress에 하늘색 전환을 연결합니다.
+controller.animate(document.querySelector('.sky-sunset'), [
+  { opacity: 0 }, { opacity: 0, offset: 0.55 }, { opacity: 1, offset: 0.75 }, { opacity: 1 },
+])
+
+controller.destroy()`,
+  vue: `onMounted(() => {
+  controller = createLayerParallax({
+    container: section.value,
+    layers: section.value.querySelectorAll('.layer-parallax-layer'),
+    onUpdate: values => { progress.value = values.progress },
+  })
+})
+
+onBeforeUnmount(() => controller?.destroy())`,
+}
+
 const patterns = [
   { slug: 'inner-scene-scroll', name: '내부 장면 이동', status: 'In progress', summary: '카드 안쪽 장면을 document scroll 위치에 맞춰 이동합니다.', constraint: '내부 스크롤 없이 clip 필요', available: true },
   { slug: 'fixed-scene-transition', name: '고정 장면 전환', status: 'In progress', summary: '고정된 장면에서 스크롤 구간마다 콘텐츠의 초점을 바꿉니다.', constraint: 'sticky 높이와 모바일 재배치', available: true },
   { slug: 'image-reveal', name: '이미지 리빌', status: 'In progress', summary: '스크롤 진행률로 이미지의 노출 영역을 점진적으로 엽니다.', constraint: '이미지 비율과 reduced motion', available: true },
-  { name: '레이어 패럴랙스', status: 'Research', summary: '깊이가 다른 레이어를 서로 다른 속도로 이동합니다.', constraint: '저사양 기기 GPU 비용', available: false },
+  { slug: 'layer-parallax', name: '레이어 패럴랙스', status: 'In progress', summary: '깊이가 다른 레이어를 서로 다른 속도로 이동합니다.', constraint: '저사양 기기 GPU 비용', available: true },
 ]
 
 function useRoute() {
@@ -113,6 +149,7 @@ function useRoute() {
     '#/patterns/inner-scene-scroll': 'inner-scene-scroll',
     '#/patterns/fixed-scene-transition': 'fixed-scene-transition',
     '#/patterns/image-reveal': 'image-reveal',
+    '#/patterns/layer-parallax': 'layer-parallax',
   }[window.location.hash] || 'index')
   const [route, setRoute] = useState(getRoute)
 
@@ -341,6 +378,75 @@ function ImageRevealDetail() {
   return <main><SiteHeader /><section className="intro-spacer fixed-intro"><a className="back-link" href="#/">← 모든 패턴</a><div className="topbar"><span>SCROLL LAB / 003</span><span>INTERACTION STUDY</span></div><div className="intro-content"><p className="eyebrow">A FRAME ENTERS IN MOTION</p><h1>스크롤로<br /><em>이미지를</em> 여는 법</h1><p className="intro-description">한 장의 이미지를 scroll progress에 맞춰 잘라 보이며, 장면의 초점을 천천히 드러냅니다.</p></div></section><section className="fixed-code-section"><div className="demo-heading"><p className="eyebrow">IMPLEMENTATION ADAPTERS</p><h2>노출은 하나,<br />연결은 셋.</h2></div><ImplementationCode id="image-reveal-code" label="이미지 리빌 구현 방식 선택" snippets={imageRevealSnippets} /></section><ImageRevealDemo /><section className="intro-spacer fixed-how"><div className="bottom-heading"><span>HOW IT WORKS</span><h2>잘라서,<br />드러낸다.</h2></div><div className="feature-list"><div className="feature-row"><span>01</span><strong>시작·종료 경계</strong><p>섹션 상단이 viewport 80%에 닿으면 열리기 시작하고, 섹션 하단이 viewport 하단에 닿아 고정이 풀리는 순간 100%가 됩니다.</p></div><div className="feature-row"><span>02</span><strong>clip-path 출력</strong><p>0~1 progress를 이미지의 왼쪽 inset에 연결해 0%에서 100%까지 노출합니다.</p></div><div className="feature-row"><span>03</span><strong>되감기와 폴백</strong><p>역스크롤에서는 같은 위치로 닫히며, 좁은 화면과 reduced motion에서는 이미지를 정적으로 모두 보여줍니다.</p></div></div></section></main>
 }
 
+const parallaxLayers = [
+  // depth 6: 섹션이 지나가는 동안 태양은 화면에 거의 머물고, 산이 그 위로 올라와 해가 지는 것처럼 보인다.
+  ['sun', 6, <><circle cx="720" cy="360" r="190" fill="#fff4c2" opacity=".28" /><circle cx="720" cy="360" r="112" fill="#f6e27f" /><circle className="sun-sunset" cx="720" cy="360" r="112" fill="#f26b3a" /></>],
+  ['far', 0.8, <path d="M0 560 220 380l170 110 250-230 260 200 300-160v600H0Z" fill="#8fa37a" />],
+  ['mid', 0.45, <path d="M0 680 260 500l210 120 260-170 470 250v200H0Z" fill="#547166" />],
+  ['near', 0.1, <path d="M0 800 340 610l220 150 280-120 360 170v90H0Z" fill="#10211d" />],
+]
+
+// 낮 → 황금빛 → 석양. keyframe offset은 scroll progress와 같다.
+const sunsetEffects = [
+  ['.sky-golden', [{ opacity: 0 }, { opacity: 0, offset: 0.3 }, { opacity: 1, offset: 0.45 }, { opacity: 1 }]],
+  ['.sky-sunset', [{ opacity: 0 }, { opacity: 0, offset: 0.45 }, { opacity: 1, offset: 0.62 }, { opacity: 1 }]],
+  ['.sun-sunset', [{ opacity: 0 }, { opacity: 0, offset: 0.38 }, { opacity: 1, offset: 0.58 }, { opacity: 1 }]],
+  ['.dusk-tint', [{ opacity: 0 }, { opacity: 0, offset: 0.5 }, { opacity: 1, offset: 0.72 }, { opacity: 1 }]],
+  ['.parallax-copy', [{ color: '#10211d' }, { color: '#10211d', offset: 0.48 }, { color: '#fff1e0', offset: 0.56 }, { color: '#fff1e0' }]],
+]
+
+function LayerParallaxDemo() {
+  const sectionRef = useRef(null)
+  const reducedMotion = useReducedMotion()
+  const [engine, setEngine] = useState('auto')
+  const [motion, setMotion] = useState({ engine: '', progress: 0 })
+
+  useEffect(() => {
+    if (reducedMotion) return undefined
+    const section = sectionRef.current
+    const controller = createLayerParallax({
+      container: section,
+      layers: section.querySelectorAll('.layer-parallax-layer'),
+      engine,
+      onUpdate: ({ progress }) => setMotion(previous => ({ ...previous, progress })),
+    })
+    sunsetEffects.forEach(([selector, keyframes]) => controller.animate(section.querySelector(selector), keyframes))
+    setMotion(previous => ({ ...previous, engine: controller.engine }))
+    return controller.destroy
+  }, [engine, reducedMotion])
+
+  const engineLabel = motion.engine === 'timeline' ? 'VIEWTIMELINE' : 'RAF'
+  return <section className="layer-parallax parallax-demo" ref={sectionRef} aria-label="레이어 패럴랙스 데모">
+    <div className="parallax-sky sky-day" /><div className="parallax-sky sky-golden" /><div className="parallax-sky sky-sunset" />
+    {parallaxLayers.map(([name, depth, shape]) => <div aria-hidden="true" className={`layer-parallax-layer parallax-${name}`} key={name} style={{ '--depth': depth }}>
+      <svg preserveAspectRatio="xMidYMax slice" viewBox="0 0 1200 900">{shape}</svg>
+    </div>)}
+    <div className="parallax-sky dusk-tint" />
+    <div className="parallax-copy"><span>04 / LAYER PARALLAX</span><h2>깊이는<br />속도의 차이다.</h2></div>
+    <div className="parallax-controls">
+      <div className="implementation-tabs" role="tablist" aria-label="패럴랙스 엔진 선택">
+        {[['auto', '브라우저 엔진 (auto)'], ['raf', 'rAF 대체']].map(([value, label]) => <button aria-selected={engine === value} className={engine === value ? 'is-selected' : ''} key={value} onClick={() => setEngine(value)} role="tab" type="button">{label}</button>)}
+      </div>
+      <span className="parallax-meter" aria-live="polite">{reducedMotion ? 'STATIC' : `${engineLabel} ${Math.round(motion.progress * 100)}%`}</span>
+    </div>
+  </section>
+}
+
+function LayerParallaxDetail() {
+  return <main><SiteHeader />
+    <section className="intro-spacer fixed-intro"><a className="back-link" href="#/">← 모든 패턴</a><div className="topbar"><span>SCROLL LAB / 004</span><span>INTERACTION STUDY</span></div><div className="intro-content"><p className="eyebrow">DEPTH FROM SPEED</p><h1>스크롤로<br /><em>깊이를</em> 만드는 법</h1><p className="intro-description">깊이가 다른 레이어가 같은 스크롤 구간을 서로 다른 거리만큼 이동하며 공간감을 만듭니다. JS API 하나로 제공하며, 지원 브라우저에서는 브라우저가 합성 스레드에서 직접 움직입니다.</p></div></section>
+    <section className="fixed-code-section"><div className="demo-heading"><p className="eyebrow">IMPLEMENTATION ADAPTERS</p><h2>API는 하나,<br />엔진은 둘.</h2></div><ImplementationCode id="layer-parallax-code" label="레이어 패럴랙스 구현 방식 선택" snippets={layerParallaxSnippets} /></section>
+    <LayerParallaxDemo />
+    <section className="intro-spacer fixed-how"><div className="bottom-heading"><span>HOW IT WORKS</span><h2>멀수록,<br />느리게.</h2></div><div className="feature-list">
+      <div className="feature-row"><span>01</span><strong>시작·종료 경계</strong><p>섹션 상단이 viewport 하단에 닿으면 0, 섹션 하단이 viewport 상단을 지나면 1입니다. ViewTimeline의 기본 cover 범위와 같습니다.</p></div>
+      <div className="feature-row"><span>02</span><strong>깊이별 이동량</strong><p>각 레이어는 (progress − 0.5) × 2 × depth × 최대 이동량만큼 translate3d로 움직입니다. 섹션이 화면 중앙에 올 때 설계한 구도로 정렬됩니다.</p></div>
+      <div className="feature-row"><span>03</span><strong>되감기와 폴백</strong><p>역스크롤은 같은 계산으로 되감깁니다. 좁은 화면에서는 최대 이동량을 절반으로 줄이고, reduced motion에서는 레이어와 하늘색을 낮의 정렬된 구도로 고정합니다.</p></div>
+      <div className="feature-row"><span>04</span><strong>두 엔진</strong><p>ViewTimeline을 지원하면(Chrome 115+, Safari 26+) 브라우저가 합성 스레드에서 레이어를 움직이고, 아니면 rAF가 같은 keyframe의 currentTime을 옮깁니다. 메인 스레드에 100ms 작업이 반복될 때 rAF는 최대 약 19px 뒤처지고, 브라우저 엔진은 1px 이내를 유지했습니다.</p></div>
+      <div className="principle-formula"><p>H = 화면 높이 · top = 섹션의 화면 내 상단 위치 · h = 섹션 높이 · shift = 최대 이동 비율</p><pre><code>{['progress = clamp((H - top) / (H + h), 0, 1)', 'y = (progress - 0.5) * 2 * depth * shift * h'].join('\n')}</code></pre></div>
+    </div><div className="footer-note"><span>LAYER PARALLAX</span><span>REVERSE TO REWIND</span></div></section>
+  </main>
+}
+
 function InnerSceneDetail() {
   return (
     <main>
@@ -406,6 +512,7 @@ function App() {
   if (route === 'inner-scene-scroll') return <InnerSceneDetail />
   if (route === 'fixed-scene-transition') return <FixedSceneDetail />
   if (route === 'image-reveal') return <ImageRevealDetail />
+  if (route === 'layer-parallax') return <LayerParallaxDetail />
   return <PatternIndex />
 }
 

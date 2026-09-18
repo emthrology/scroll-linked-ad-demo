@@ -100,6 +100,23 @@ h1 em { color: #b9d95e; font-style: normal; }
 .reveal-frame { position: relative; aspect-ratio: 4 / 3; overflow: hidden; background: #203a35; clip-path: inset(0 calc((1 - var(--reveal-progress, 0)) * 100%) 0 0); }
 .reveal-frame img { width: 100%; height: 100%; object-fit: cover; }
 .reveal-progress { position: absolute; right: 18px; bottom: 16px; color: #e9ecdf; }
+.parallax-demo { height: max(100vh, 640px); color: #10211d; background: #bcd6d3; }
+.parallax-demo .layer-parallax-layer svg { display: block; width: 100%; height: 100%; }
+.parallax-sky { position: absolute; inset: 0; pointer-events: none; }
+.sky-day { background: linear-gradient(180deg, #b7d3d2 0%, #dfe7d6 72%); }
+.sky-golden { opacity: 0; background: linear-gradient(180deg, #e7c18a 0%, #f5d99e 50%, #fae6b4 100%); }
+.sky-sunset { opacity: 0; background: linear-gradient(180deg, #33264d 0%, #7c4868 34%, #dd6f55 64%, #f6b26a 100%); }
+.sun-sunset { opacity: 0; }
+.dusk-tint { z-index: 1; opacity: 0; background: linear-gradient(180deg, rgba(51, 38, 77, 0) 35%, rgba(34, 18, 44, .5) 100%); }
+.parallax-copy { position: absolute; top: 14vh; left: 5vw; z-index: 2; }
+.parallax-copy span, .parallax-meter { font: 11px 'DM Mono', monospace; letter-spacing: .14em; }
+.parallax-copy span { opacity: .75; }
+.parallax-copy h2 { margin: 24px 0 0; font-size: clamp(3rem, 7vw, 7rem); font-weight: 500; line-height: .88; letter-spacing: -.09em; word-break: keep-all; }
+.parallax-controls { position: absolute; right: 5vw; bottom: 5vh; left: 5vw; z-index: 2; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+.parallax-controls .implementation-tabs { margin: 0; padding: 0; }
+.parallax-controls .implementation-tabs button { border-color: rgba(233, 236, 223, .4); color: #e9ecdf; }
+.parallax-controls .implementation-tabs button.is-selected { border-color: #c5dc77; color: #10211d; background: #c5dc77; }
+.parallax-meter { color: #e9ecdf; }
 .fixed-scene-sticky { position: sticky; top: 0; display: grid; min-height: 100vh; overflow: hidden; place-items: center; color: #ecf2e8; background: radial-gradient(circle at 50% 52%, #23413a 0, #10221f 27%, #070b0b 67%); }
 .fixed-stage { position: absolute; z-index: 1; width: min(1320px, 92vw); text-align: center; will-change: opacity, transform; }
 .fixed-stage > span, .fixed-scene-meter { color: #c5dc77; font: 11px 'DM Mono', monospace; letter-spacing: .14em; }

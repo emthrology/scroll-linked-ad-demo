@@ -7,7 +7,7 @@
 | 내부 장면 이동 | In progress | 구현됨 | 예정 | 구현됨 | 구현됨 | 제품·브랜드 카드 | 내부 스크롤 없이 clip 필요 |
 | 고정 장면 전환 | In progress | 구현됨 | 예정 | 예정 | 구현됨 | 제품 소개·기능 설명 | sticky 높이와 모바일 재배치 |
 | 이미지 리빌 | In progress | 구현됨 | 예정 | 구현됨 | 구현됨 | 에디토리얼·캠페인 | 이미지 비율과 reduced motion |
-| 레이어 패럴랙스 | Research | 예정 | 예정 | 예정 | 예정 | 브랜드·공간 소개 | 저사양 기기 GPU 비용 |
+| 레이어 패럴랙스 | In progress | 구현됨 | 예정 | 구현됨 | 구현됨 | 브랜드·공간 소개 | 레이어 수 × 면적 × 화면 배율²의 합성 메모리 |
 
 ## 패턴 추가 기준
 
@@ -34,6 +34,19 @@
 - **역스크롤:** 같은 progress 계산으로 clip-path 노출폭도 같은 위치만큼 닫힌다.
 - **모바일·reduced motion:** sticky와 clip-path를 해제하고 이미지를 정적으로 모두 보여준다.
 - **첫 적용:** 에디토리얼·캠페인에서 문장과 대표 이미지를 순차적으로 보여주는 화면.
+
+## 레이어 패럴랙스 계약
+
+- **효과:** 깊이가 다른 레이어가 같은 스크롤 구간을 서로 다른 거리만큼 이동해 공간감을 만든다.
+- **시작·종료:** 섹션 상단이 viewport 하단에 닿으면 0, 섹션 하단이 viewport 상단을 지나면 1이다. CSS view-timeline의 `cover` 범위와 같다.
+- **출력:** 레이어마다 `translate3d(0, (progress - 0.5) × 2 × depth × shift × h, 0)`을 적용한다. `depth`는 0(페이지와 같이 이동)~1(가장 느림), `shift`는 섹션 높이 대비 최대 이동 비율(기본 0.15)이며, 화면을 채우는 레이어는 위아래로 `shift`만큼 여유를 둔다. 태양처럼 투명한 배경 위의 오브젝트는 depth 1을 넘길 수 있다. depth ≈ 1 / shift이면 화면에 거의 고정되어 가장 먼 물체처럼 보인다. progress 0.5에서 설계한 구도로 정렬된다.
+- **역스크롤:** 같은 계산으로 되감긴다.
+- **모바일·reduced motion:** 760px 이하에서는 `shift`를 0.075로 줄이고, `prefers-reduced-motion: reduce`에서는 0으로 두어 정렬된 구도로 고정한다.
+- **성능 제약:** `top`·`background-position`으로 이동하지 않는다(프레임마다 layout 발생). 이동 레이어 하나가 합성 메모리를 1440×900 1x에서 약 7MB, 390×844 3x에서 약 16MB 더 쓰므로 이동 레이어는 4개 이하로 둔다.
+- **구현 방식:** 라이브러리 API는 JS `createLayerParallax({ container, layers, engine: 'auto', onUpdate })` 하나다. `ViewTimeline`을 지원하면(Chrome 115+, Safari 26+) 브라우저가 합성 스레드에서 keyframe을 진행하고, 아니면 rAF가 같은 keyframe을 멈춘 animation의 `currentTime`으로 옮긴다. 메인 스레드에 100ms 작업이 반복될 때 rAF는 최대 약 19px 뒤처지고 브라우저 엔진은 1px 이내였다. 비교 수치는 #6에 기록한다.
+- **부가 효과:** `controller.animate(element, keyframes)`로 하늘색·opacity 같은 효과를 같은 progress에 연결한다. keyframe offset은 progress와 같다.
+- **크기 변화:** 이동 거리는 px keyframe으로 만들고 `ResizeObserver`로 container 크기가 바뀔 때 다시 계산한다. WebKit에서는 mount 시점에 스타일시트가 아직 적용되지 않아 이동 거리가 0으로 계산된 사례가 있었다.
+- **첫 적용:** 브랜드·공간 소개 화면에서 풍경이나 공간 사진을 원경·중경·근경 레이어로 나눈 hero.
 
 ## 상태 정의
 
