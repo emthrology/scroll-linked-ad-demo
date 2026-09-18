@@ -43,6 +43,36 @@ controller.destroy()`,
 onBeforeUnmount(() => controller?.destroy())`,
 }
 
+const fixedSceneSnippets = {
+  react: `useEffect(() => {
+  const controller = createFixedSceneTransition({
+    container: sectionRef.current,
+    sceneCount: 3,
+    onUpdate: setMotion,
+  })
+
+  return controller.destroy
+}, [])`,
+  plain: `const controller = createFixedSceneTransition({
+  container: document.querySelector('.fixed-scene-demo'),
+  sceneCount: 3,
+  onUpdate: ({ progress, stage }) => {
+    meter.textContent = \`SCENE 0\${stage + 1} / \${Math.round(progress * 100)}%\`
+  },
+})
+
+controller.destroy()`,
+  vue: `onMounted(() => {
+  controller = createFixedSceneTransition({
+    container: section.value,
+    sceneCount: 3,
+    onUpdate: values => { motion.value = values },
+  })
+})
+
+onBeforeUnmount(() => controller?.destroy())`,
+}
+
 const patterns = [
   { slug: 'inner-scene-scroll', name: '내부 장면 이동', status: 'In progress', summary: '카드 안쪽 장면을 document scroll 위치에 맞춰 이동합니다.', constraint: '내부 스크롤 없이 clip 필요', available: true },
   { slug: 'fixed-scene-transition', name: '고정 장면 전환', status: 'In progress', summary: '고정된 장면에서 스크롤 구간마다 콘텐츠의 초점을 바꿉니다.', constraint: 'sticky 높이와 모바일 재배치', available: true },
@@ -251,6 +281,18 @@ function FixedSceneDemo() {
   </section>
 }
 
+function FixedSceneCode() {
+  const [implementation, setImplementation] = useState('react')
+
+  return <section className="fixed-code-section" aria-label="고정 장면 전환 구현 방식">
+    <div className="demo-heading"><p className="eyebrow">IMPLEMENTATION ADAPTERS</p><h2>고정은 하나,<br />연결은 셋.</h2><p>실제 데모는 React 기준 구현으로 한 번만 실행합니다. 탭에서는 같은 고정 장면 계약을 각 환경에 연결하는 코드만 비교합니다.</p></div>
+    <div className="implementation-tabs" role="tablist" aria-label="고정 장면 전환 구현 방식 선택">
+      {['react', 'plain', 'vue'].map(name => <button aria-controls="fixed-implementation-stage" aria-selected={implementation === name} className={implementation === name ? 'is-selected' : ''} key={name} onClick={() => setImplementation(name)} role="tab" type="button">{name === 'plain' ? 'Plain JS' : name[0].toUpperCase() + name.slice(1)}</button>)}
+    </div>
+    <div className="implementation-code" id="fixed-implementation-stage" role="tabpanel"><div className="code-heading"><span>{implementation === 'plain' ? 'PLAIN JAVASCRIPT' : implementation.toUpperCase()}</span><span>ADAPTER EXAMPLE</span></div><pre><code>{fixedSceneSnippets[implementation]}</code></pre></div>
+  </section>
+}
+
 function InnerSceneDetail() {
   return (
     <main>
@@ -295,6 +337,7 @@ function FixedSceneDetail() {
       <div className="topbar"><span>SCROLL LAB / 002</span><span>INTERACTION STUDY</span></div>
       <div className="intro-content"><p className="eyebrow">A PRODUCT STORY IN THREE SCENES</p><h1>스크롤로<br /><em>시선을</em> 고정하는 법</h1><p className="intro-description">긴 document scroll 구간 안에서 장면은 화면에 머물고, 메시지의 중심만 단계별로 바뀝니다.</p><div className="scroll-cue"><span />아래로 스크롤해 보세요</div></div>
     </section>
+    <FixedSceneCode />
     <FixedSceneDemo />
     <section className="intro-spacer fixed-how">
       <div className="bottom-heading"><span>HOW IT WORKS</span><h2>고정하고,<br />전환한다.</h2></div>
