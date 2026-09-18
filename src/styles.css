@@ -47,6 +47,8 @@ h1 em { color: #b9d95e; font-style: normal; }
 .implementation-tabs { display: flex; gap: 8px; padding: 0 5vw 28px; }
 .implementation-tabs button { padding: 10px 14px; border: 1px solid rgba(32, 58, 53, .35); color: #526055; background: transparent; cursor: pointer; font: 11px 'DM Mono', monospace; letter-spacing: .08em; }
 .implementation-tabs button.is-selected { border-color: #203a35; color: #e9ecdf; background: #203a35; }
+.code-disclosure { padding: 0 5vw 28px; }
+.code-toggle { padding: 0; border: 0; color: #203a35; background: transparent; cursor: pointer; font: 11px 'DM Mono', monospace; letter-spacing: .08em; text-decoration: underline; text-underline-offset: 4px; }
 .implementation-code { margin: 0 5vw; background: #203a35; color: #e9ecdf; }
 .code-heading { display: flex; justify-content: space-between; gap: 16px; padding: 14px 18px; border-bottom: 1px solid rgba(233, 236, 223, .18); color: #b9d95e; font: 10px 'DM Mono', monospace; letter-spacing: .12em; }
 .implementation-code pre { min-height: 230px; margin: 0; padding: 24px 18px; overflow-x: auto; font: 13px/1.7 'DM Mono', monospace; }
@@ -88,6 +90,7 @@ h1 em { color: #b9d95e; font-style: normal; }
 .fixed-code-section .demo-heading { padding-top: 4vh; }
 .fixed-code-section .demo-heading .eyebrow { color: #c5dc77; }
 .fixed-code-section .demo-heading > p:last-child { color: #b6c6b8; }
+.fixed-code-section .code-toggle { color: #c5dc77; }
 .fixed-scene-demo { position: relative; height: 400vh; background: #070b0b; }
 .fixed-scene-sticky { position: sticky; top: 0; display: grid; min-height: 100vh; overflow: hidden; place-items: center; color: #ecf2e8; background: radial-gradient(circle at 50% 52%, #23413a 0, #10221f 27%, #070b0b 67%); }
 .fixed-stage { position: absolute; z-index: 1; width: min(1320px, 92vw); text-align: center; will-change: opacity, transform; }
@@ -123,6 +126,7 @@ h1 em { color: #b9d95e; font-style: normal; }
   .intro-content { padding-top: 20vh; }
   .back-link { margin-bottom: 52px; }
   .demo-heading { padding: 72px 24px 32px; }
+  .code-disclosure { padding: 0 24px 20px; }
   .implementation-tabs { padding: 0 24px 20px; }
   .implementation-code { margin: 0 24px; }
   .implementation-code pre { min-height: 0; font-size: 11px; }

@@ -125,36 +125,35 @@ function PatternIndex() {
 }
 
 function ScrollLinkedAd() {
-  const [implementation, setImplementation] = useState('react')
-
   return (
     <section className="demo-section" aria-label="구현 방식별 스크롤 연동 광고 데모">
       <div className="demo-heading">
         <p className="eyebrow">ONE LIVE DEMO, THREE ADAPTERS</p>
         <h2>움직임은 하나,<br />연결 방식은 셋.</h2>
       </div>
-      <div className="implementation-tabs" role="tablist" aria-label="구현 방식 선택">
-        {['react', 'plain', 'vue'].map(name => (
-          <button
-            aria-controls="implementation-stage"
-            aria-selected={implementation === name}
-            className={implementation === name ? 'is-selected' : ''}
-            key={name}
-            onClick={() => setImplementation(name)}
-            role="tab"
-            type="button"
-          >
-            {name === 'plain' ? 'Plain JS' : name[0].toUpperCase() + name.slice(1)}
-          </button>
-        ))}
-      </div>
-      <div className="implementation-code" id="implementation-stage" role="tabpanel">
-        <div className="code-heading"><span>{implementation === 'plain' ? 'PLAIN JAVASCRIPT' : implementation.toUpperCase()}</span><span>ADAPTER EXAMPLE</span></div>
-        <pre><code>{implementationSnippets[implementation]}</code></pre>
-      </div>
+      <ImplementationCode id="implementation-stage" label="구현 방식 선택" snippets={implementationSnippets} />
       <ReactScene />
     </section>
   )
+}
+
+function ImplementationCode({ id, label, snippets }) {
+  const [implementation, setImplementation] = useState('react')
+  const [isVisible, setIsVisible] = useState(false)
+
+  return <>
+    <div className="code-disclosure">
+      <button aria-controls={isVisible ? id : undefined} aria-expanded={isVisible} className="code-toggle" onClick={() => setIsVisible(visible => !visible)} type="button">
+        {isVisible ? '코드 숨기기 −' : '코드 보기 +'}
+      </button>
+    </div>
+    {isVisible && <>
+      <div className="implementation-tabs" role="tablist" aria-label={label}>
+        {['react', 'plain', 'vue'].map(name => <button aria-controls={id} aria-selected={implementation === name} className={implementation === name ? 'is-selected' : ''} key={name} onClick={() => setImplementation(name)} role="tab" type="button">{name === 'plain' ? 'Plain JS' : name[0].toUpperCase() + name.slice(1)}</button>)}
+      </div>
+      <div className="implementation-code" id={id} role="tabpanel"><div className="code-heading"><span>{implementation === 'plain' ? 'PLAIN JAVASCRIPT' : implementation.toUpperCase()}</span><span>ADAPTER EXAMPLE</span></div><pre><code>{snippets[implementation]}</code></pre></div>
+    </>}
+  </>
 }
 
 function SceneCard({ metrics, isActive, adRef, innerRef }) {
@@ -281,14 +280,9 @@ function FixedSceneDemo() {
 }
 
 function FixedSceneCode() {
-  const [implementation, setImplementation] = useState('react')
-
   return <section className="fixed-code-section" aria-label="고정 장면 전환 구현 방식">
     <div className="demo-heading"><p className="eyebrow">IMPLEMENTATION ADAPTERS</p><h2>고정은 하나,<br />연결은 셋.</h2></div>
-    <div className="implementation-tabs" role="tablist" aria-label="고정 장면 전환 구현 방식 선택">
-      {['react', 'plain', 'vue'].map(name => <button aria-controls="fixed-implementation-stage" aria-selected={implementation === name} className={implementation === name ? 'is-selected' : ''} key={name} onClick={() => setImplementation(name)} role="tab" type="button">{name === 'plain' ? 'Plain JS' : name[0].toUpperCase() + name.slice(1)}</button>)}
-    </div>
-    <div className="implementation-code" id="fixed-implementation-stage" role="tabpanel"><div className="code-heading"><span>{implementation === 'plain' ? 'PLAIN JAVASCRIPT' : implementation.toUpperCase()}</span><span>ADAPTER EXAMPLE</span></div><pre><code>{fixedSceneSnippets[implementation]}</code></pre></div>
+    <ImplementationCode id="fixed-implementation-stage" label="고정 장면 전환 구현 방식 선택" snippets={fixedSceneSnippets} />
   </section>
 }
 
