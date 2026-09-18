@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createInnerSceneScroll } from './inner-scene-scroll.js'
+import { mountPlainScene } from './plain-scene.js'
+import { mountVueScene } from './vue-scene.js'
 import './styles.css'
 
 const principleSteps = [
@@ -11,6 +13,85 @@ const principleSteps = [
 ]
 
 function ScrollLinkedAd() {
+  const [implementation, setImplementation] = useState('react')
+
+  return (
+    <section className="demo-section" aria-label="구현 방식별 스크롤 연동 광고 데모">
+      <div className="demo-heading">
+        <p className="eyebrow">LIVE IMPLEMENTATIONS</p>
+        <h2>하나의 스크롤,<br />세 가지 구현.</h2>
+        <p>탭을 전환하면 선택한 구현체를 새로 마운트합니다. 모두 같은 document scroll과 기준 구현을 사용합니다.</p>
+      </div>
+      <div className="implementation-tabs" role="tablist" aria-label="구현 방식 선택">
+        {['react', 'plain', 'vue'].map(name => (
+          <button
+            aria-controls="implementation-stage"
+            aria-selected={implementation === name}
+            className={implementation === name ? 'is-selected' : ''}
+            key={name}
+            onClick={() => setImplementation(name)}
+            role="tab"
+            type="button"
+          >
+            {name === 'plain' ? 'Plain JS' : name[0].toUpperCase() + name.slice(1)}
+          </button>
+        ))}
+      </div>
+      <div className="implementation-stage" id="implementation-stage" role="tabpanel">
+        {implementation === 'react' && <ReactScene />}
+        {implementation === 'plain' && <PlainScene />}
+        {implementation === 'vue' && <VueScene />}
+      </div>
+    </section>
+  )
+}
+
+function SceneCard({ metrics, isActive, adRef, innerRef }) {
+  return (
+    <div className="ad-card">
+      <div className="ad-window" ref={adRef}>
+        <div className="ad-inner" ref={innerRef}>
+          <AdContents />
+        </div>
+      </div>
+      <div className="ad-status" aria-live="polite">
+        <span>{isActive ? 'SCROLL LINKED' : 'OUTSIDE RANGE'}</span>
+        <span>{Math.round(metrics.progress * 100)}%</span>
+      </div>
+    </div>
+  )
+}
+
+function AdContents() {
+  return <>
+    <div className="ad-hero">
+      <div className="hero-orb hero-orb-one" />
+      <div className="hero-orb hero-orb-two" />
+      <div className="ad-kicker">A NEW PERSPECTIVE</div>
+      <p className="ad-brand">AD<br />PREVIEW</p>
+      <div className="hero-copy"><span>DISCOVER SOMETHING NEW</span><h2>당신의 일상에<br />새로운 장면을</h2></div>
+    </div>
+    <div className="ad-detail">
+      <span className="detail-label">MORE TO DISCOVER</span>
+      <h3>익숙한 일상에<br />새로운 발견</h3><div className="detail-line" />
+      <p>작은 관심에서 시작되는 변화.<br />당신만의 다음 장면을 만나보세요.</p>
+      <div className="detail-stats"><div><strong>NEW</strong><span>COLLECTION</span></div><div><strong>NOW</strong><span>EXPLORE MORE</span></div></div>
+    </div>
+    <div className="ad-footer"><span>ADVERTISEMENT PREVIEW</span><span>SCROLL TO EXPLORE</span></div>
+  </>
+}
+
+function MetricsPanel({ metrics }) {
+  return <div className="metrics-panel">
+    <p className="metrics-label">LIVE MOTION DATA</p>
+    <div className="metric-row"><span>document progress</span><strong>{Math.round(metrics.progress * 100)}%</strong></div>
+    <div className="metric-track"><span style={{ width: `${metrics.progress * 100}%` }} /></div>
+    <div className="metric-row"><span>inner translateY</span><strong>-{Math.round(metrics.offset)}px</strong></div>
+    <p className="metrics-hint">광고 카드가 화면을 통과하는 동안<br />내부 콘텐츠가 같은 진행률로 이동합니다.</p>
+  </div>
+}
+
+function ReactScene() {
   const adRef = useRef(null)
   const innerRef = useRef(null)
   const [metrics, setMetrics] = useState({ progress: 0, offset: 0 })
@@ -32,59 +113,18 @@ function ScrollLinkedAd() {
   }, [])
 
   return (
-    <section className="ad-section" aria-label="스크롤 연동 광고 데모">
-      <div className="ad-card">
-        <div className="ad-window" ref={adRef}>
-          <div className="ad-inner" ref={innerRef}>
-            <div className="ad-hero">
-              <div className="hero-orb hero-orb-one" />
-              <div className="hero-orb hero-orb-two" />
-              <div className="ad-kicker">A NEW PERSPECTIVE</div>
-              <p className="ad-brand">AD<br />PREVIEW</p>
-              <div className="hero-copy">
-                <span>DISCOVER SOMETHING NEW</span>
-                <h2>당신의 일상에<br />새로운 장면을</h2>
-              </div>
-            </div>
-
-            <div className="ad-detail">
-              <span className="detail-label">MORE TO DISCOVER</span>
-              <h3>익숙한 일상에<br />새로운 발견</h3>
-              <div className="detail-line" />
-              <p>작은 관심에서 시작되는 변화.<br />당신만의 다음 장면을 만나보세요.</p>
-              <div className="detail-stats">
-                <div><strong>NEW</strong><span>COLLECTION</span></div>
-                <div><strong>NOW</strong><span>EXPLORE MORE</span></div>
-              </div>
-            </div>
-
-            <div className="ad-footer">
-              <span>ADVERTISEMENT PREVIEW</span>
-              <span>SCROLL TO EXPLORE</span>
-            </div>
-          </div>
-        </div>
-        <div className="ad-status" aria-live="polite">
-          <span>{isActive ? 'SCROLL LINKED' : 'OUTSIDE RANGE'}</span>
-          <span>{Math.round(metrics.progress * 100)}%</span>
-        </div>
-      </div>
-      <div className="metrics-panel">
-        <p className="metrics-label">LIVE MOTION DATA</p>
-        <div className="metric-row">
-          <span>document progress</span>
-          <strong>{Math.round(metrics.progress * 100)}%</strong>
-        </div>
-        <div className="metric-track"><span style={{ width: `${metrics.progress * 100}%` }} /></div>
-        <div className="metric-row">
-          <span>inner translateY</span>
-          <strong>-{Math.round(metrics.offset)}px</strong>
-        </div>
-        <p className="metrics-hint">광고 카드가 화면을 통과하는 동안<br />내부 콘텐츠가 같은 진행률로 이동합니다.</p>
-      </div>
-    </section>
+    <div className="ad-section"><SceneCard adRef={adRef} innerRef={innerRef} isActive={isActive} metrics={metrics} /><MetricsPanel metrics={metrics} /></div>
   )
 }
+
+function MountedScene({ mount }) {
+  const hostRef = useRef(null)
+  useEffect(() => mount(hostRef.current), [mount])
+  return <div ref={hostRef} />
+}
+
+function PlainScene() { return <MountedScene mount={mountPlainScene} /> }
+function VueScene() { return <MountedScene mount={mountVueScene} /> }
 
 function App() {
   return (

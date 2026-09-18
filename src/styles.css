@@ -16,7 +16,16 @@ h1 em { color: #b9d95e; font-style: normal; }
 .intro-description { color: #b4c0b4; font-size: clamp(1rem, 1.5vw, 1.25rem); line-height: 1.6; }
 .scroll-cue { display: flex; align-items: center; gap: 13px; margin-top: 78px; color: #e0e6d5; font: 11px 'DM Mono', monospace; letter-spacing: .1em; }
 .scroll-cue span { display: block; width: 40px; height: 1px; background: #b9d95e; }
-.ad-section { position: relative; display: flex; align-items: center; justify-content: center; gap: 30px; padding: 32px 5vw; background: #d9ddcf; }
+.demo-section { background: #d9ddcf; color: #203a35; }
+.demo-heading { padding: 10vh 5vw 44px; }
+.demo-heading .eyebrow { color: #63755c; }
+.demo-heading h2 { margin-bottom: 20px; font-size: clamp(3rem, 7vw, 7rem); font-weight: 500; line-height: .9; letter-spacing: -.09em; }
+.demo-heading > p:last-child { max-width: 540px; margin: 0; color: #526055; font-size: 15px; line-height: 1.7; }
+.implementation-tabs { display: flex; gap: 8px; padding: 0 5vw 28px; }
+.implementation-tabs button { padding: 10px 14px; border: 1px solid rgba(32, 58, 53, .35); color: #526055; background: transparent; cursor: pointer; font: 11px 'DM Mono', monospace; letter-spacing: .08em; }
+.implementation-tabs button.is-selected { border-color: #203a35; color: #e9ecdf; background: #203a35; }
+.implementation-stage { min-height: min(72vh, 760px); }
+.ad-section { position: relative; display: flex; align-items: center; justify-content: center; gap: 30px; padding: 32px 5vw; }
 .ad-card { position: relative; width: min(600px, 75vw); }
 .ad-window { position: relative; width: 100%; height: min(72vh, 760px); min-height: 520px; overflow: hidden; background: #203a35; box-shadow: 0 32px 80px rgba(16, 33, 29, .22); }
 .ad-inner { height: 140%; }
@@ -65,6 +74,9 @@ h1 em { color: #b9d95e; font-style: normal; }
 @media (max-width: 760px) {
   .intro-spacer { padding: 24px 24px; }
   .intro-content { padding-top: 20vh; }
+  .demo-heading { padding: 72px 24px 32px; }
+  .implementation-tabs { padding: 0 24px 20px; }
+  .implementation-stage { min-height: 0; }
   .ad-section { display: block; padding: 24px; }
   .ad-card { width: 100%; }
   .ad-window { height: 650px; min-height: 0; }

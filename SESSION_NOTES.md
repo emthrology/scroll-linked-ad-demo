@@ -12,3 +12,6 @@
 - 구간 검증: 브라우저에서 종료 이후 100%/-533px, 역스크롤 86%/-456px, 시작 이전 0%/0px 및 Observer 활성 전환 확인. production build 통과.
 - Plain JS 기준 구현: `src/inner-scene-scroll.js`에 `createInnerSceneScroll()`을 추가했다. React 데모는 이 함수의 lifecycle wrapper이며, 시작·종료 경계, rAF, IntersectionObserver, destroy 정리를 공유한다.
 - 여백 변경: 두 번째 섹션의 160vh/150vh 최소 높이를 제거하고, 사용자 조정에 따라 상하 패딩을 데스크톱 32px/모바일 24px로 설정했다. 좌우 화면 간격과 카드·패널 간격은 유지한다.
+- 2026-09-18: 소개 → 데모 → How 구조를 유지하며, 데모에 React / Plain JS / Vue 실제 마운트 탭을 추가했다. `MountedScene`은 탭 전환 시 Plain JS의 destroy 또는 Vue의 app.unmount를 호출하고, 각 구현체는 `createInnerSceneScroll()`을 통해 동일한 경계·rAF·observer·destroy 정책을 사용한다.
+- Vue: `src/vue-scene.js`는 Vue runtime render function으로 구성해 별도 SFC 컴파일 설정 없이 마운트한다. `onBeforeUnmount`에서 controller.destroy()를 실행한다. Vue 런타임을 production dependency로 추가했다.
+- 검증: production build 통과. 브라우저에서 Plain JS → Vue 탭 전환 후 각각 ad window/inner/selected tab이 하나씩만 존재함을 확인했다. Vue에서 아래/위 스크롤로 progress 및 transform이 14%/-70px → 90%/-433px → 14%/-70px로 되감겼고 console error는 없었다.
