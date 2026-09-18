@@ -39,11 +39,12 @@
 
 - **효과:** 깊이가 다른 레이어가 같은 스크롤 구간을 서로 다른 거리만큼 이동해 공간감을 만든다.
 - **시작·종료:** 섹션 상단이 viewport 하단에 닿으면 0, 섹션 하단이 viewport 상단을 지나면 1이다. CSS view-timeline의 `cover` 범위와 같다.
-- **출력:** 레이어마다 `translate3d(0, (progress - 0.5) × 2 × depth × shift × h, 0)`을 적용한다. `depth`는 0(페이지와 같이 이동)~1(가장 느림), `shift`는 섹션 높이 대비 최대 이동 비율(기본 0.15)이며, 화면을 채우는 레이어는 위아래로 `shift`만큼 여유를 둔다. 태양처럼 투명한 배경 위의 오브젝트는 depth 1을 넘길 수 있다. depth ≈ 1 / shift이면 화면에 거의 고정되어 가장 먼 물체처럼 보인다. progress 0.5에서 설계한 구도로 정렬된다.
+- **출력:** 레이어마다 `translate3d(0, (progress - 0.5) × 2 × depth × shift × h, 0)`을 적용한다. `depth`는 0(페이지와 같은 속도)부터 커질수록 느려지며, 화면 높이와 섹션 높이가 같을 때 화면 속도는 `1 - depth × shift`다. depth ≈ 1 / shift이면 화면에 거의 고정되어 가장 먼 물체처럼 보인다. `shift`는 depth 1의 최대 이동량(섹션 높이 대비, 기본 0.15)이며 `createLayerParallax({ shift })` 옵션으로 지정하고, 생략하면 container의 `--parallax-shift`를 읽는다. progress 0.5에서 설계한 구도로 정렬된다.
 - **역스크롤:** 같은 계산으로 되감긴다.
 - **모바일·reduced motion:** 760px 이하에서는 `shift`를 0.075로 줄이고, `prefers-reduced-motion: reduce`에서는 0으로 두어 정렬된 구도로 고정한다.
 - **성능 제약:** `top`·`background-position`으로 이동하지 않는다(프레임마다 layout 발생). 이동 레이어 하나가 합성 메모리를 1440×900 1x에서 약 7MB, 390×844 3x에서 약 16MB 더 쓰므로 이동 레이어는 4개 이하로 둔다.
 - **구현 방식:** 라이브러리 API는 JS `createLayerParallax({ container, layers, engine: 'auto', onUpdate })` 하나다. `ViewTimeline`을 지원하면(Chrome 115+, Safari 26+) 브라우저가 합성 스레드에서 keyframe을 진행하고, 아니면 rAF가 같은 keyframe을 멈춘 animation의 `currentTime`으로 옮긴다. 메인 스레드에 100ms 작업이 반복될 때 rAF는 최대 약 19px 뒤처지고 브라우저 엔진은 1px 이내였다. 비교 수치는 #6에 기록한다.
+- **여유 영역:** JS가 레이어마다 `--parallax-overscan = depth × shift`를 지정해 레이어를 위아래로 늘리므로, depth가 1을 넘어도 가장자리가 드러나지 않는다. 투명한 오브젝트(태양 등)는 `data-parallax-overscan="none"`으로 늘리지 않는다. 그림은 `.layer-parallax-art` 안에 섹션 크기로 그리고, 늘어난 영역은 도형을 viewBox 밖까지 칠해 채운다.
 - **부가 효과:** `controller.animate(element, keyframes)`로 하늘색·opacity 같은 효과를 같은 progress에 연결한다. keyframe offset은 progress와 같다.
 - **크기 변화:** 이동 거리는 px keyframe으로 만들고 `ResizeObserver`로 container 크기가 바뀔 때 다시 계산한다. WebKit에서는 mount 시점에 스타일시트가 아직 적용되지 않아 이동 거리가 0으로 계산된 사례가 있었다.
 - **첫 적용:** 브랜드·공간 소개 화면에서 풍경이나 공간 사진을 원경·중경·근경 레이어로 나눈 hero.

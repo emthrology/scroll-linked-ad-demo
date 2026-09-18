@@ -3,13 +3,14 @@ import { createLayerParallax } from '../../../patterns/layer-parallax.js'
 import '../../../patterns/layer-parallax.css'
 import { useReducedMotion } from '../../../hooks/useReducedMotion.js'
 
-// [이름, 범례 이름, depth, SVG 도형]
+// [이름, 범례 이름, depth, SVG 도형]. 데스크톱(shift 0.15) 화면 속도 = 1 - depth × 0.15
+// 그림은 섹션 높이에 맞춰 그리고(4:3), 넓은 화면의 좌우와 여유 영역은 viewBox 밖(x -1200~2400, y 1800)까지 칠해 채운다.
 const parallaxLayers = [
-  // depth 6: 섹션이 지나가는 동안 태양은 화면에 거의 머물고, 산이 그 위로 올라와 해가 지는 것처럼 보인다.
+  // depth 6(속도 10%): 태양은 화면에 거의 머물고, 산이 그 위로 올라와 해가 지는 것처럼 보인다.
   ['sun', '태양', 6, <><circle cx="720" cy="360" r="190" fill="#fff4c2" opacity=".28" /><circle cx="720" cy="360" r="112" fill="#f6e27f" /><circle className="sun-sunset" cx="720" cy="360" r="112" fill="#f26b3a" /></>],
-  ['far', '원경 산', 0.8, <path d="M0 560 220 380l170 110 250-230 260 200 300-160v600H0Z" fill="#8fa37a" />],
-  ['mid', '중경 산', 0.45, <path d="M0 680 260 500l210 120 260-170 470 250v200H0Z" fill="#547166" />],
-  ['near', '근경 산', 0.1, <path d="M0 800 340 610l220 150 280-120 360 170v90H0Z" fill="#10211d" />],
+  ['far', '원경 산', 2, <path d="M-1200 470 -900 330l340 190 300-120 260 160 220-180 170 110 250-230 260 200 300-160 300 170 300-130 300 180 300-100V1800H-1200Z" fill="#8fa37a" />],
+  ['mid', '중경 산', 1.33, <path d="M-1200 640 -850 520l350 140 300-120 200 140 260-180 210 120 260-170 470 250 300-140 350 130 300-150 250 110V1800H-1200Z" fill="#547166" />],
+  ['near', '근경 산', 0.67, <path d="M-1200 760 -800 640l380 150 270-110 150 120 340-190 220 150 280-120 360 170 350-150 350 140 300-110 200 80V1800H-1200Z" fill="#10211d" />],
 ]
 
 // 낮 → 황금빛 → 석양. keyframe offset은 scroll progress와 같다.
@@ -70,8 +71,8 @@ export function LayerParallaxDemo() {
   const engineLabel = motion.engine === 'timeline' ? 'VIEWTIMELINE' : 'RAF'
   return <section className="layer-parallax parallax-demo" ref={sectionRef} aria-label="레이어 패럴랙스 데모">
     <div className="parallax-sky sky-day" /><div className="parallax-sky sky-golden" /><div className="parallax-sky sky-sunset" />
-    {parallaxLayers.map(([name, , depth, shape]) => <div aria-hidden="true" className={`layer-parallax-layer parallax-${name}`} key={name} style={{ '--depth': depth }}>
-      <svg preserveAspectRatio="xMidYMax slice" viewBox="0 0 1200 900">{shape}</svg>
+    {parallaxLayers.map(([name, , depth, shape]) => <div aria-hidden="true" className={`layer-parallax-layer parallax-${name}`} data-parallax-overscan={name === 'sun' ? 'none' : undefined} key={name} style={{ '--depth': depth }}>
+      <svg className="layer-parallax-art" preserveAspectRatio="xMidYMax slice" viewBox="0 0 1200 900">{shape}</svg>
     </div>)}
     <div className="parallax-sky dusk-tint" />
     <div className="parallax-copy"><span>04 / LAYER PARALLAX</span><h2>깊이는<br />속도의 차이다.</h2></div>

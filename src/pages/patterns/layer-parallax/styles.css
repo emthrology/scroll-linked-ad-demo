@@ -1,5 +1,4 @@
 .parallax-demo { height: max(100vh, 640px); color: #10211d; background: #bcd6d3; }
-.parallax-demo .layer-parallax-layer svg { display: block; width: 100%; height: 100%; }
 .parallax-sky { position: absolute; inset: 0; pointer-events: none; }
 .sky-day { background: linear-gradient(180deg, #b7d3d2 0%, #dfe7d6 72%); }
 .sky-golden { opacity: 0; background: linear-gradient(180deg, #e7c18a 0%, #f5d99e 50%, #fae6b4 100%); }
@@ -22,3 +21,5 @@
 @media (max-width: 760px) {
   .parallax-legend { top: calc(14vh + 150px); right: auto; left: 24px; }
 }
+/* 그림 확대 기준을 섹션 높이로 고정한다. 넓은 화면에서 slice가 폭 기준으로 커져 산이 하늘을 덮는 것을 막는다. */
+.parallax-demo .layer-parallax-art { left: 50%; width: auto; aspect-ratio: 4 / 3; transform: translateX(-50%); }

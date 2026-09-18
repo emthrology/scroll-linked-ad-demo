@@ -1,4 +1,7 @@
 .layer-parallax { position: relative; overflow: clip; --parallax-shift: .15; }
-.layer-parallax-layer { position: absolute; inset: calc(var(--parallax-shift) * -100%) 0; }
+/* --parallax-overscan은 JS가 레이어마다 depth × shift로 지정한다. */
+.layer-parallax-layer { position: absolute; inset: calc(var(--parallax-overscan, 0) * -100%) 0; }
+/* 레이어 안에서 섹션과 같은 크기로 그리는 영역. 여유 영역은 콘텐츠가 overflow로 채운다. */
+.layer-parallax-art { position: absolute; left: 0; width: 100%; top: calc(100% * var(--parallax-overscan, 0) / (1 + 2 * var(--parallax-overscan, 0))); height: calc(100% / (1 + 2 * var(--parallax-overscan, 0))); overflow: visible; }
 @media (max-width: 760px) { .layer-parallax { --parallax-shift: .075; } }
 @media (prefers-reduced-motion: reduce) { .layer-parallax { --parallax-shift: 0; } }
