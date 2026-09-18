@@ -46,7 +46,7 @@ function MetricsPanel({ metrics }) {
   </div>
 }
 
-export function ReactScene() {
+export function InnerSceneDemo() {
   const adRef = useRef(null)
   const innerRef = useRef(null)
   const [metrics, setMetrics] = useState({ progress: 0, offset: 0 })
