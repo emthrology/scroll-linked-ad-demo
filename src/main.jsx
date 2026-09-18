@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { createInnerSceneScroll } from './inner-scene-scroll.js'
-import { createFixedSceneTransition } from './fixed-scene-transition.js'
+import { createInnerSceneScroll } from './patterns/inner-scene-scroll.js'
+import { createFixedSceneTransition } from './patterns/fixed-scene-transition.js'
+import { createImageReveal } from './patterns/image-reveal.js'
 import './styles.css'
 
 const principleSteps = [
@@ -73,10 +74,37 @@ controller.destroy()`,
 onBeforeUnmount(() => controller?.destroy())`,
 }
 
+const imageRevealSnippets = {
+  react: `useEffect(() => {
+  const controller = createImageReveal({
+    container: revealRef.current,
+    onUpdate: setProgress,
+  })
+
+  return controller.destroy
+}, [])`,
+  plain: `const controller = createImageReveal({
+  container: document.querySelector('.image-reveal-demo'),
+  onUpdate: ({ progress }) => {
+    label.textContent = Math.round(progress * 100) + '%'
+  },
+})
+
+controller.destroy()`,
+  vue: `onMounted(() => {
+  controller = createImageReveal({
+    container: reveal.value,
+    onUpdate: values => { progress.value = values.progress },
+  })
+})
+
+onBeforeUnmount(() => controller?.destroy())`,
+}
+
 const patterns = [
   { slug: 'inner-scene-scroll', name: '내부 장면 이동', status: 'In progress', summary: '카드 안쪽 장면을 document scroll 위치에 맞춰 이동합니다.', constraint: '내부 스크롤 없이 clip 필요', available: true },
   { slug: 'fixed-scene-transition', name: '고정 장면 전환', status: 'In progress', summary: '고정된 장면에서 스크롤 구간마다 콘텐츠의 초점을 바꿉니다.', constraint: 'sticky 높이와 모바일 재배치', available: true },
-  { name: '이미지 리빌', status: 'Research', summary: '스크롤 진행률로 이미지의 노출 영역을 점진적으로 엽니다.', constraint: '이미지 비율과 reduced motion', available: false },
+  { slug: 'image-reveal', name: '이미지 리빌', status: 'In progress', summary: '스크롤 진행률로 이미지의 노출 영역을 점진적으로 엽니다.', constraint: '이미지 비율과 reduced motion', available: true },
   { name: '레이어 패럴랙스', status: 'Research', summary: '깊이가 다른 레이어를 서로 다른 속도로 이동합니다.', constraint: '저사양 기기 GPU 비용', available: false },
 ]
 
@@ -84,6 +112,7 @@ function useRoute() {
   const getRoute = () => ({
     '#/patterns/inner-scene-scroll': 'inner-scene-scroll',
     '#/patterns/fixed-scene-transition': 'fixed-scene-transition',
+    '#/patterns/image-reveal': 'image-reveal',
   }[window.location.hash] || 'index')
   const [route, setRoute] = useState(getRoute)
 
@@ -290,6 +319,28 @@ function FixedSceneCode() {
   </section>
 }
 
+function ImageRevealDemo() {
+  const revealRef = useRef(null)
+  const reducedMotion = useReducedMotion()
+  const [progress, setProgress] = useState(0)
+
+  useEffect(() => {
+    if (reducedMotion) return undefined
+    return createImageReveal({ container: revealRef.current, onUpdate: ({ progress: value }) => setProgress(value) }).destroy
+  }, [reducedMotion])
+
+  return <section className={`image-reveal-demo${reducedMotion ? ' is-reduced' : ''}`} ref={revealRef} aria-label="이미지 리빌 데모">
+    <div className="image-reveal-sticky">
+      <div className="reveal-copy"><span>01 / IMAGE REVEAL</span><h2>장면은<br />천천히 열린다.</h2><p>스크롤 위치가 이미지의 노출 폭을 결정합니다.</p></div>
+      <div className="reveal-frame"><img alt="녹색 언덕과 해가 있는 추상 풍경" src="/atlas-reveal.svg" /><span className="reveal-progress">{Math.round((reducedMotion ? 1 : progress) * 100)}%</span></div>
+    </div>
+  </section>
+}
+
+function ImageRevealDetail() {
+  return <main><SiteHeader /><section className="intro-spacer fixed-intro"><a className="back-link" href="#/">← 모든 패턴</a><div className="topbar"><span>SCROLL LAB / 003</span><span>INTERACTION STUDY</span></div><div className="intro-content"><p className="eyebrow">A FRAME ENTERS IN MOTION</p><h1>스크롤로<br /><em>이미지를</em> 여는 법</h1><p className="intro-description">한 장의 이미지를 scroll progress에 맞춰 잘라 보이며, 장면의 초점을 천천히 드러냅니다.</p></div></section><section className="fixed-code-section"><div className="demo-heading"><p className="eyebrow">IMPLEMENTATION ADAPTERS</p><h2>노출은 하나,<br />연결은 셋.</h2></div><ImplementationCode id="image-reveal-code" label="이미지 리빌 구현 방식 선택" snippets={imageRevealSnippets} /></section><ImageRevealDemo /><section className="intro-spacer fixed-how"><div className="bottom-heading"><span>HOW IT WORKS</span><h2>잘라서,<br />드러낸다.</h2></div><div className="feature-list"><div className="feature-row"><span>01</span><strong>시작·종료 경계</strong><p>섹션 상단 80%에서 시작하고 하단 20%에서 끝납니다.</p></div><div className="feature-row"><span>02</span><strong>clip-path 출력</strong><p>0~1 progress를 이미지의 왼쪽 inset에 연결해 0%에서 100%까지 노출합니다.</p></div><div className="feature-row"><span>03</span><strong>되감기와 폴백</strong><p>역스크롤에서는 같은 위치로 닫히며, 좁은 화면과 reduced motion에서는 이미지를 정적으로 모두 보여줍니다.</p></div></div></section></main>
+}
+
 function InnerSceneDetail() {
   return (
     <main>
@@ -354,6 +405,7 @@ function App() {
   const route = useRoute()
   if (route === 'inner-scene-scroll') return <InnerSceneDetail />
   if (route === 'fixed-scene-transition') return <FixedSceneDetail />
+  if (route === 'image-reveal') return <ImageRevealDetail />
   return <PatternIndex />
 }
 
