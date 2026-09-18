@@ -4,12 +4,13 @@
 
 ## 현재 상태
 
-현재는 React/Vite 체험 사이트이며, 패턴 인덱스와 내부 장면 이동 상세 화면을 hash 경로로 제공한다.
+현재는 React/Vite 체험 사이트이며, 패턴 인덱스와 네 패턴의 상세 화면을 hash 경로(`#/patterns/<slug>`)로 제공한다. 체험 사이트(UI)와 기준 구현(`src/patterns/`)은 폴더로 분리되어 있고, 상세 화면은 패턴마다 폴더 하나에 모인다.
 
 ```text
-src/main.jsx     패턴 인덱스·상세 라우팅과 React 데모 UI
-src/patterns/                 세 기준 구현: 내부 장면 이동·고정 장면 전환·이미지 리빌
-src/styles.css   데모 스타일
+src/App.jsx                    route → 페이지 연결
+src/components/                상세 공통 골격 (DetailIntro, CodeSection, HowItWorks)
+src/pages/patterns/<slug>/     Detail.jsx · Demo.jsx · snippets.js · styles.css
+src/patterns/                  기준 구현. core.js에 진행률·rAF 공통 유틸리티
 ```
 
 ## 패턴의 공통 계약

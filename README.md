@@ -20,7 +20,7 @@ npm run dev
 
 ## 현재 데모
 
-- **내부 장면 이동** — 광고 창이 화면의 80% 지점에 진입하면 시작하고, 하단이 20% 지점을 지나면 끝난다. 프레임워크 독립 구현은 `src/inner-scene-scroll.js:1`, React 연결과 비교용 코드 예시는 `src/main.jsx`에 있다.
+- **내부 장면 이동** — 광고 창이 화면의 80% 지점에 진입하면 시작하고, 하단이 20% 지점을 지나면 끝난다. 프레임워크 독립 구현은 `src/patterns/inner-scene-scroll.js`, React 연결과 비교용 코드 예시는 `src/pages/patterns/inner-scene-scroll/`에 있다.
 - **고정 장면 전환** — 300vh 구간에서 sticky 장면을 유지한 채 세 메시지를 교차 전환한다. 기준 구현은 `src/fixed-scene-transition.js:1`, 체험 페이지는 `#/patterns/fixed-scene-transition`이다.
 
 ## Plain JavaScript 사용

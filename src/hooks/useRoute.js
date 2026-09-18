@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react'
 
-export function useRoute() {
-  const getRoute = () => ({
-    '#/patterns/inner-scene-scroll': 'inner-scene-scroll',
-    '#/patterns/fixed-scene-transition': 'fixed-scene-transition',
-    '#/patterns/image-reveal': 'image-reveal',
-    '#/patterns/layer-parallax': 'layer-parallax',
-  }[window.location.hash] || 'index')
+// #/patterns/<slug>가 알려진 slug이면 slug를, 아니면 'index'를 돌려준다.
+export function useRoute(slugs) {
+  const getRoute = () => {
+    const slug = window.location.hash.match(/^#\/patterns\/([\w-]+)$/)?.[1]
+    return slugs.includes(slug) ? slug : 'index'
+  }
   const [route, setRoute] = useState(getRoute)
 
   useEffect(() => {

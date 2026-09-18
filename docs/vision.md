@@ -30,6 +30,6 @@
 
 ## 현재 결정
 
-- `내부 장면 이동`을 첫 번째 기준 구현으로 삼는다. `src/main.jsx:15`
-- CSS `overflow: hidden`으로 장면 밖 콘텐츠만 가리고, 움직임은 document scroll 진행률에서 만든 `transform`으로 제어한다. `src/main.jsx:29`
+- `내부 장면 이동`을 첫 번째 기준 구현으로 삼는다. `src/patterns/inner-scene-scroll.js`
+- CSS `overflow: hidden`으로 장면 밖 콘텐츠만 가리고, 움직임은 document scroll 진행률에서 만든 `transform`으로 제어한다. `src/patterns/inner-scene-scroll.js`
 - 새 패턴이 3개 이상 생기기 전에는 모노레포나 패키지 분리를 도입하지 않는다. 현재는 탐색 비용보다 구조 비용이 크다.

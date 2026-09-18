@@ -13,7 +13,7 @@ const details = {
 }
 
 export function App() {
-  const route = useRoute()
+  const route = useRoute(Object.keys(details))
   const Detail = details[route]
   return Detail ? <Detail /> : <PatternIndex />
 }

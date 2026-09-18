@@ -7,11 +7,18 @@
 ## 현재 구조
 
 ```text
-src/main.jsx                       패턴 인덱스·상세 화면과 React 데모
-src/patterns/                      내부 장면 이동·고정 장면 전환·이미지 리빌·레이어 패럴랙스 기준 구현
-src/styles.css                     페이지와 데모 스타일
-docs/              제품 방향·목표 구조·패턴 카탈로그
-.github/           이슈 작성 양식
+src/main.jsx                       createRoot와 전역 스타일 진입점
+src/App.jsx                        hash route → 페이지 연결
+src/hooks/                         useRoute, useReducedMotion
+src/components/                    SiteHeader, DetailIntro, CodeSection, HowItWorks, ImplementationCode
+src/content/patterns.js            인덱스에 보이는 패턴 메타데이터
+src/pages/PatternIndex.jsx         패턴 인덱스
+src/pages/patterns/<slug>/         패턴별 Detail·Demo·snippets·styles
+src/styles/base.css                전역·상세 공통 스타일
+src/patterns/                      프레임워크 독립 기준 구현 (UI 코드 없음)
+src/patterns/core.js               progressBetween·clamp·scroll rAF 구독 공통 유틸리티
+docs/                              제품 방향·목표 구조·패턴 카탈로그
+.github/                           이슈 작성 양식
 ```
 
 ## 불변식
@@ -22,6 +29,8 @@ docs/              제품 방향·목표 구조·패턴 카탈로그
 - 고정 장면 전환은 400vh 섹션의 sticky travel을 0~1 progress로 계산한다. `src/patterns/fixed-scene-transition.js`
 - 이미지 리빌은 섹션 상단 80% 시작, sticky 고정이 풀리는 섹션 하단 100% 종료로 계산한다. `src/patterns/image-reveal.js`
 - 레이어 패럴랙스의 timeline·rAF 엔진은 같은 keyframe을 공유한다. 엔진별로 이동량을 따로 계산하지 않는다. `src/patterns/layer-parallax.js`
+- 진행률 경계 계산은 `src/patterns/core.js`의 `progressBetween(top, startTop, endTop)`을 쓴다. 패턴 파일에서 공식을 다시 쓰지 않는다.
+- 새 패턴 상세는 `src/pages/patterns/<slug>/`에 Detail·Demo·snippets·styles를 두고, `src/App.jsx`의 `details`와 `src/content/patterns.js`에 등록한다.
 - 데모와 프레임워크 구현은 분리되지 않는다. 체험 사이트는 실제 구현체를 사용한다.
 - 새 패턴은 카탈로그의 추가 기준을 충족하기 전에는 구현을 시작하지 않는다.
 

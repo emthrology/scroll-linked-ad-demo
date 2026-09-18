@@ -1,6 +1,4 @@
-function clamp(value, min, max) {
-  return Math.min(max, Math.max(min, value))
-}
+import { progressBetween } from './core.js'
 
 function readNumber(element, name) {
   return parseFloat(getComputedStyle(element).getPropertyValue(name)) || 0
@@ -30,7 +28,7 @@ export function createLayerParallax({ container, layers, engine = 'auto', onUpda
   const readProgress = () => {
     if (!timeline) {
       const rect = container.getBoundingClientRect()
-      return clamp((window.innerHeight - rect.top) / (window.innerHeight + rect.height), 0, 1)
+      return progressBetween(rect.top, window.innerHeight, -rect.height)
     }
     return animations[0]?.effect.getComputedTiming().progress ?? 0
   }
