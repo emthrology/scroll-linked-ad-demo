@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { createInnerSceneScroll } from './inner-scene-scroll.js'
-import { mountPlainScene } from './plain-scene.js'
-import { mountVueScene } from './vue-scene.js'
 import './styles.css'
 
 const principleSteps = [
@@ -12,15 +10,47 @@ const principleSteps = [
   ['04', '역스크롤로 되감기', '위로 스크롤하면 진행률과 이동량도 함께 줄어듭니다. 시간에 따라 재생되는 애니메이션이 아니라 스크롤 위치에 따라 장면이 결정됩니다.'],
 ]
 
+const implementationSnippets = {
+  react: `useEffect(() => {
+  const controller = createInnerSceneScroll({
+    ad: adRef.current,
+    inner: innerRef.current,
+    onUpdate: setMetrics,
+  })
+
+  return controller.destroy
+}, [])`,
+  plain: `const controller = createInnerSceneScroll({
+  ad: document.querySelector('.ad-window'),
+  inner: document.querySelector('.ad-inner'),
+  onUpdate: ({ progress, offset }) => {
+    progressLabel.textContent = Math.round(progress * 100) + '%'
+    inner.style.transform = \`translateY(-\${offset}px)\`
+  },
+})
+
+// 페이지를 떠날 때 정리합니다.
+controller.destroy()`,
+  vue: `onMounted(() => {
+  controller = createInnerSceneScroll({
+    ad: ad.value,
+    inner: inner.value,
+    onUpdate: values => { metrics.value = values },
+  })
+})
+
+onBeforeUnmount(() => controller?.destroy())`,
+}
+
 function ScrollLinkedAd() {
   const [implementation, setImplementation] = useState('react')
 
   return (
     <section className="demo-section" aria-label="구현 방식별 스크롤 연동 광고 데모">
       <div className="demo-heading">
-        <p className="eyebrow">LIVE IMPLEMENTATIONS</p>
-        <h2>하나의 스크롤,<br />세 가지 구현.</h2>
-        <p>탭을 전환하면 선택한 구현체를 새로 마운트합니다. 모두 같은 document scroll과 기준 구현을 사용합니다.</p>
+        <p className="eyebrow">ONE LIVE DEMO, THREE ADAPTERS</p>
+        <h2>움직임은 하나,<br />연결 방식은 셋.</h2>
+        <p>광고는 React 기준 구현으로 한 번만 실행합니다. 아래 탭에서 같은 scroll-driven 계약을 각 환경에 연결하는 코드만 비교하세요.</p>
       </div>
       <div className="implementation-tabs" role="tablist" aria-label="구현 방식 선택">
         {['react', 'plain', 'vue'].map(name => (
@@ -37,11 +67,11 @@ function ScrollLinkedAd() {
           </button>
         ))}
       </div>
-      <div className="implementation-stage" id="implementation-stage" role="tabpanel">
-        {implementation === 'react' && <ReactScene />}
-        {implementation === 'plain' && <PlainScene />}
-        {implementation === 'vue' && <VueScene />}
+      <div className="implementation-code" id="implementation-stage" role="tabpanel">
+        <div className="code-heading"><span>{implementation === 'plain' ? 'PLAIN JAVASCRIPT' : implementation.toUpperCase()}</span><span>ADAPTER EXAMPLE</span></div>
+        <pre><code>{implementationSnippets[implementation]}</code></pre>
       </div>
+      <ReactScene />
     </section>
   )
 }
@@ -116,15 +146,6 @@ function ReactScene() {
     <div className="ad-section"><SceneCard adRef={adRef} innerRef={innerRef} isActive={isActive} metrics={metrics} /><MetricsPanel metrics={metrics} /></div>
   )
 }
-
-function MountedScene({ mount }) {
-  const hostRef = useRef(null)
-  useEffect(() => mount(hostRef.current), [mount])
-  return <div ref={hostRef} />
-}
-
-function PlainScene() { return <MountedScene mount={mountPlainScene} /> }
-function VueScene() { return <MountedScene mount={mountVueScene} /> }
 
 function App() {
   return (

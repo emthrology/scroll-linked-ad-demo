@@ -24,7 +24,9 @@ h1 em { color: #b9d95e; font-style: normal; }
 .implementation-tabs { display: flex; gap: 8px; padding: 0 5vw 28px; }
 .implementation-tabs button { padding: 10px 14px; border: 1px solid rgba(32, 58, 53, .35); color: #526055; background: transparent; cursor: pointer; font: 11px 'DM Mono', monospace; letter-spacing: .08em; }
 .implementation-tabs button.is-selected { border-color: #203a35; color: #e9ecdf; background: #203a35; }
-.implementation-stage { min-height: min(72vh, 760px); }
+.implementation-code { margin: 0 5vw; background: #203a35; color: #e9ecdf; }
+.code-heading { display: flex; justify-content: space-between; gap: 16px; padding: 14px 18px; border-bottom: 1px solid rgba(233, 236, 223, .18); color: #b9d95e; font: 10px 'DM Mono', monospace; letter-spacing: .12em; }
+.implementation-code pre { min-height: 230px; margin: 0; padding: 24px 18px; overflow-x: auto; font: 13px/1.7 'DM Mono', monospace; }
 .ad-section { position: relative; display: flex; align-items: center; justify-content: center; gap: 30px; padding: 32px 5vw; }
 .ad-card { position: relative; width: min(600px, 75vw); }
 .ad-window { position: relative; width: 100%; height: min(72vh, 760px); min-height: 520px; overflow: hidden; background: #203a35; box-shadow: 0 32px 80px rgba(16, 33, 29, .22); }
@@ -76,7 +78,8 @@ h1 em { color: #b9d95e; font-style: normal; }
   .intro-content { padding-top: 20vh; }
   .demo-heading { padding: 72px 24px 32px; }
   .implementation-tabs { padding: 0 24px 20px; }
-  .implementation-stage { min-height: 0; }
+  .implementation-code { margin: 0 24px; }
+  .implementation-code pre { min-height: 0; font-size: 11px; }
   .ad-section { display: block; padding: 24px; }
   .ad-card { width: 100%; }
   .ad-window { height: 650px; min-height: 0; }

@@ -13,8 +13,5 @@
     "react": "latest",
     "react-dom": "latest",
     "vite": "latest"
-  },
-  "dependencies": {
-    "vue": "^3.5.43"
   }
 }
