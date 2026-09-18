@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
+import { createInnerSceneScroll } from './inner-scene-scroll.js'
 import './styles.css'
 
 const principleSteps = [
@@ -9,10 +10,6 @@ const principleSteps = [
   ['04', '역스크롤로 되감기', '위로 스크롤하면 진행률과 이동량도 함께 줄어듭니다. 시간에 따라 재생되는 애니메이션이 아니라 스크롤 위치에 따라 장면이 결정됩니다.'],
 ]
 
-function clamp(value, min, max) {
-  return Math.min(max, Math.max(min, value))
-}
-
 function ScrollLinkedAd() {
   const adRef = useRef(null)
   const innerRef = useRef(null)
@@ -20,66 +17,18 @@ function ScrollLinkedAd() {
   const [isActive, setIsActive] = useState(false)
 
   useEffect(() => {
-    let frameId = 0
-    let observer
-    const inner = innerRef.current
+    const controller = createInnerSceneScroll({
+      ad: adRef.current,
+      inner: innerRef.current,
+      onUpdate: ({ progress, offset }) => {
+        setMetrics(previous => previous.progress === progress && previous.offset === offset
+          ? previous
+          : { progress, offset })
+      },
+      onActiveChange: setIsActive,
+    })
 
-    const update = () => {
-      frameId = 0
-      const ad = adRef.current
-      const inner = innerRef.current
-      if (!ad || !inner) return
-
-      // 콘텐츠를 잘라 보여주는 광고 창 자체를 기준으로 측정한다.
-      const rect = ad.getBoundingClientRect()
-      const viewportHeight = window.innerHeight
-      const start = viewportHeight * 0.8
-      const end = viewportHeight * 0.2 - rect.height
-      const rawProgress = (start - rect.top) / (start - end)
-      const progress = clamp(rawProgress, 0, 1)
-      const maxMove = Math.max(0, inner.scrollHeight - ad.clientHeight)
-      const offset = progress * maxMove
-
-      inner.style.transform = `translateY(${-offset}px)`
-      setMetrics(previous => previous.progress === progress && previous.offset === offset
-        ? previous
-        : { progress, offset })
-    }
-
-    const requestUpdate = () => {
-      if (!frameId) frameId = requestAnimationFrame(update)
-    }
-
-    const observeActiveRange = () => {
-      observer?.disconnect()
-      // rootMargin의 %는 높이 기준이 아니므로 화면 높이에서 px 값을 구한다.
-      const inset = window.innerHeight * 0.2
-      observer = new IntersectionObserver(([entry]) => {
-        setIsActive(entry.isIntersecting)
-        if (inner) inner.style.willChange = entry.isIntersecting ? 'transform' : 'auto'
-        requestUpdate()
-      }, { rootMargin: `-${inset}px 0px -${inset}px 0px`, threshold: 0 })
-      if (adRef.current) observer.observe(adRef.current)
-    }
-
-    const onResize = () => {
-      observeActiveRange()
-      requestUpdate()
-    }
-
-    update()
-    observeActiveRange()
-    // 영역을 건너뛰는 큰 스크롤에서도 시작·끝 위치가 맞도록 계속 계산한다.
-    window.addEventListener('scroll', requestUpdate, { passive: true })
-    window.addEventListener('resize', onResize)
-
-    return () => {
-      window.removeEventListener('scroll', requestUpdate)
-      window.removeEventListener('resize', onResize)
-      observer?.disconnect()
-      if (inner) inner.style.willChange = 'auto'
-      if (frameId) cancelAnimationFrame(frameId)
-    }
+    return controller.destroy
   }, [])
 
   return (
